@@ -1,0 +1,92 @@
+.body {
+  position: relative;
+  width: 85vw;
+  height: 95vh;
+  margin: auto;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  flex-direction: column;
+  background-color: black;
+  padding: 10px;
+  /* background-image: url("../images//spawn_run_background.gif");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(80%); */
+}
+
+.background {
+  position: absolute;
+  z-index: -1;
+  width: 95vw;
+  height: 95vh;
+  object-fit: cover;
+  filter: brightness(50%);
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  width: 80vw;
+  margin: auto;
+  margin-top: 20px;
+}
+
+.modal {
+  display: none;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 700px;
+  margin: auto;
+  /* margin: 20px; */
+}
+
+.how-to-container {
+  display: flex;
+  flex-direction: column;
+  width: 50vw;
+  margin: auto;
+}
+
+.how-to-title {
+  display: flex;
+  justify-content: center;
+  font-size: 24px;
+  margin: 20px 0;
+}
+
+.directions {
+  display: flex;
+  justify-content: space-around;
+
+}
+
+.movement-title, .goals-title {
+  font-size: 18px;
+  border-bottom: 1px solid;
+}
+
+#canvas {
+
+  display: none;
+}
+
+#camera {
+  background-color: rgb("100 100 100 .2");
+  /* padding: 10px; */
+  border: 20px solid black;
+  margin: 20px;
+}
+
+.link-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
