@@ -796,7 +796,7 @@ function (_MovingObj) {
       if (this.collide(salmon)) {
         if (!this.eaten) {
           salmon.totalEaten += this.foodValue;
-          salmon.width = salmon.initialWidth + salmon.totalEaten * 5;
+          salmon.width = salmon.initialWidth + salmon.totalEaten / 5;
           this.eaten = true;
         }
       }
@@ -1008,7 +1008,7 @@ function () {
     key: "restart",
     value: function restart() {
       this.running = false;
-      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](30);
+      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](15);
       this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions);
       this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, 500, 300, this.dimensions.width, this.dimensions.height);
       this.camera.follow(this.salmon);
