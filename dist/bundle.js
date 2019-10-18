@@ -554,21 +554,17 @@ function () {
       this.air = new _air__WEBPACK_IMPORTED_MODULE_0__["default"]([0, 0], this.width, 150);
       this.water = new _water__WEBPACK_IMPORTED_MODULE_1__["default"]([0, 150], this.width, this.height - 150 - 150);
       this.rawGrounds = [{
-        pos: [0, 350],
+        pos: [0, this.height - 350],
         width: this.width,
         height: this.height - 350 - 150
-      }, {
-        pos: [700, 140],
-        width: 50,
-        height: this.height - 350 - 150
-      }];
+      } // {pos: [700, 140], width: 50, height: (this.height - 350 - 150)}
+      ];
       this.grounds = [];
       this.rawGrounds.forEach(function (option) {
         var ground = new _ground__WEBPACK_IMPORTED_MODULE_2__["default"](option.pos, option.width, option.height);
 
-        _this.grounds.push(ground);
+        _this.grounds.push(ground); // debugger
 
-        debugger;
       }); // this.ground = new Ground([0, 350], this.width, this.height - 350 - 150);
     }
   }, {
@@ -796,7 +792,7 @@ function (_MovingObj) {
       if (this.collide(salmon)) {
         if (!this.eaten) {
           salmon.totalEaten += this.foodValue;
-          salmon.width = salmon.initialWidth + salmon.totalEaten / 5;
+          salmon.width = salmon.initialWidth + salmon.totalEaten;
           this.eaten = true;
         }
       }
@@ -843,8 +839,8 @@ function () {
     this.width = this.initialWidth;
     this.height = this.width * .56;
     this.yVel = 0;
-    this.xVel = 0;
-    this.jumpSpeed = this.height * .8;
+    this.xVel = 0; // this.jumpSpeed = this.height *;
+
     this.alive = true;
     this.faceLeft = true;
     this.totalEaten = 0;
@@ -868,12 +864,12 @@ function () {
   }, {
     key: "moveUp",
     value: function moveUp() {
-      this.yVel += -1 * this.height / 9;
+      this.yVel += -1 * this.height / 5;
     }
   }, {
     key: "moveDown",
     value: function moveDown() {
-      this.yVel += this.height / 9;
+      this.yVel += this.height / 7;
     }
   }, {
     key: "moveSalmon",
@@ -977,6 +973,10 @@ function () {
       height: canvas.height
     };
     this.cam = cam.getContext("2d");
+    this.camDim = {
+      width: cam.width,
+      height: cam.height
+    };
     this.moveInput = {
       up: false,
       left: false,
@@ -1008,9 +1008,9 @@ function () {
     key: "restart",
     value: function restart() {
       this.running = false;
-      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](15);
+      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](20);
       this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions);
-      this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, 500, 300, this.dimensions.width, this.dimensions.height);
+      this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
       this.camera.follow(this.salmon);
       this.animate();
     }
@@ -1143,19 +1143,21 @@ function (_Element) {
     }
   }, {
     key: "applyCurrent",
-    value: function applyCurrent(salmon) {
-      if (this.salmonIsIn(salmon)) {
-        salmon.xVel *= this.friction;
-        salmon.yVel *= this.friction;
-        salmon.xVel += this.current;
-        salmon.yVel += this.buoyancy;
-      }
+    value: function applyCurrent(salmon) {// if (this.salmonIsIn(salmon)) {
+      //   salmon.xVel *= this.friction;
+      //   salmon.yVel *= this.friction;
+      //   salmon.xVel += this.current;
+      //   salmon.yVel += this.buoyancy;
+      // }
     }
   }, {
     key: "drawWater",
     value: function drawWater(ctx) {
-      ctx.fillStyle = "rgba(150, 205, 255, 0.5)";
-      ctx.fillRect(this.pos[0], this.pos[1], this.width, this.height);
+      ctx.fillStyle = "rgba(150, 205, 255, 0.5)"; // ctx.fillRect(this.pos[0], this.pos[1], this.width, this.height);
+
+      ctx.beginPath();
+      ctx.arc(this.pos[0], this.pos[1], this.width / 6, 0, 360);
+      ctx.fill();
     }
   }, {
     key: "animate",

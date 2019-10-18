@@ -11,6 +11,10 @@ export default class SalmonRun {
       height: canvas.height
     };
     this.cam = cam.getContext("2d");
+    this.camDim = {
+      width: cam.width,
+      height: cam.height
+    }
 
     this.moveInput = {
       up: false,
@@ -40,9 +44,9 @@ export default class SalmonRun {
 
   restart() {
     this.running = false;
-    this.salmon = new Salmon(15);
+    this.salmon = new Salmon(20);
     this.level = new Level(this.dimensions);
-    this.camera = new Camera(0, 0, 500, 300, this.dimensions.width, this.dimensions.height);
+    this.camera = new Camera(0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
     this.camera.follow(this.salmon);
 
     this.animate();

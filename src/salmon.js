@@ -14,7 +14,7 @@ export default class Salmon {
     this.height = this.width * .56;
     this.yVel = 0;
     this.xVel = 0;
-    this.jumpSpeed = this.height * .8;
+    // this.jumpSpeed = this.height *;
 
     this.alive = true;
     this.faceLeft = true;
@@ -28,8 +28,8 @@ export default class Salmon {
 
   moveLeft() { this.xVel += -1 * this.height/9; this.faceLeft = true}
   moveRight() { this.xVel += this.height/9; this.faceLeft = false}
-  moveUp() { this.yVel += -1 * this.height/9; }
-  moveDown() { this.yVel += this.height/9; }
+  moveUp() { this.yVel += -1 * this.height/5; }
+  moveDown() { this.yVel += this.height/7; }
 
   moveSalmon() {
     this.x += this.xVel;

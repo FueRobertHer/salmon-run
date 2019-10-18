@@ -26,17 +26,20 @@ export default class Water extends Element {
   }
 
   applyCurrent(salmon) {
-    if (this.salmonIsIn(salmon)) {
-      salmon.xVel *= this.friction;
-      salmon.yVel *= this.friction;
-      salmon.xVel += this.current;
-      salmon.yVel += this.buoyancy;
-    }
+    // if (this.salmonIsIn(salmon)) {
+    //   salmon.xVel *= this.friction;
+    //   salmon.yVel *= this.friction;
+    //   salmon.xVel += this.current;
+    //   salmon.yVel += this.buoyancy;
+    // }
   }
 
   drawWater(ctx) {
     ctx.fillStyle = "rgba(150, 205, 255, 0.5)";
-    ctx.fillRect(this.pos[0], this.pos[1], this.width, this.height);
+    // ctx.fillRect(this.pos[0], this.pos[1], this.width, this.height);
+    ctx.beginPath();
+    ctx.arc(this.pos[0], this.pos[1], this.width/6, 0, 360)
+    ctx.fill();
   }
 
   

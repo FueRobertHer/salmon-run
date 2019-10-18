@@ -33,7 +33,7 @@ export default class Camera {
       if (this.followed.bounds().top < this.height/2) {
         this.y = 0;
       } else if (this.followed.bounds().top > (this.mapHeight - this.height/2)) {
-        this. y = this.mapHeight - this.height;
+        this.y = this.mapHeight - this.height;
       } else {
         this.y = this.followed.bounds().top - this.height/2;
       }
