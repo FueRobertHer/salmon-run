@@ -1009,7 +1009,9 @@ function () {
   }, {
     key: "pause",
     value: function pause() {
-      this.running = false;
+      if (this.running) {
+        this.running = false;
+      }
     }
   }, {
     key: "gameOver",
@@ -1047,6 +1049,7 @@ function () {
       if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
       if (e.key === 's' || e.key === 'ArrowDown') this.moveInput.down = true;
       if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true;
+      if (e.key === 'p' || e.key === 'Escape') this.pause();
     }
   }, {
     key: "keyUp",

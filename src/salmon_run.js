@@ -35,7 +35,10 @@ export default class SalmonRun {
   }
 
   pause() {
-    this.running = false;
+    if (this.running) {
+      this.running = false;
+
+    }
   }
 
   gameOver() {
@@ -71,6 +74,8 @@ export default class SalmonRun {
     if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
     if (e.key === 's' || e.key === 'ArrowDown') this.moveInput.down = true;
     if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true;
+
+    if (e.key === 'p' || e.key === 'Escape') this.pause()
   }
 
   keyUp(e) {
