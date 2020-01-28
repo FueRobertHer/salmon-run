@@ -30,14 +30,15 @@ export default class SalmonRun {
   }
 
   play() {
-    this.running = true;
-    this.animate();
+    if (!this.running) {
+      this.running = true;
+      this.animate();
+    }
   }
 
   pause() {
     if (this.running) {
       this.running = false;
-
     }
   }
 
@@ -64,11 +65,12 @@ export default class SalmonRun {
   click(e) {
     if (!this.running) this.play();
 
-    if (this.level.atSurface(this.salmon)) this.salmon.jump();
+    // if (this.level.atSurface(this.salmon)) this.salmon.jump();
   }
 
   keyDown(e) {
-    if (!this.running) this.play();
+    // if (!this.running) this.play();
+    console.log(e.key)
     
     if (e.key === 'w' || e.key === 'ArrowUp') this.moveInput.up = true;
     if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
@@ -76,6 +78,7 @@ export default class SalmonRun {
     if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true;
 
     if (e.key === 'p' || e.key === 'Escape') this.pause()
+    if (e.key === ' ') this.play()
   }
 
   keyUp(e) {
@@ -94,6 +97,7 @@ export default class SalmonRun {
   }
 
   animate() {
+    console.log(this.running)
     this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height)
 
     if (this.level.atSurface(this.salmon)) this.salmonMove();

@@ -1003,8 +1003,10 @@ function () {
   _createClass(SalmonRun, [{
     key: "play",
     value: function play() {
-      this.running = true;
-      this.animate();
+      if (!this.running) {
+        this.running = true;
+        this.animate();
+      }
     }
   }, {
     key: "pause",
@@ -1038,18 +1040,19 @@ function () {
   }, {
     key: "click",
     value: function click(e) {
-      if (!this.running) this.play();
-      if (this.level.atSurface(this.salmon)) this.salmon.jump();
+      if (!this.running) this.play(); // if (this.level.atSurface(this.salmon)) this.salmon.jump();
     }
   }, {
     key: "keyDown",
     value: function keyDown(e) {
-      if (!this.running) this.play();
+      // if (!this.running) this.play();
+      console.log(e.key);
       if (e.key === 'w' || e.key === 'ArrowUp') this.moveInput.up = true;
       if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
       if (e.key === 's' || e.key === 'ArrowDown') this.moveInput.down = true;
       if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true;
       if (e.key === 'p' || e.key === 'Escape') this.pause();
+      if (e.key === ' ') this.play();
     }
   }, {
     key: "keyUp",
@@ -1071,6 +1074,7 @@ function () {
   }, {
     key: "animate",
     value: function animate() {
+      console.log(this.running);
       this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
       if (this.level.atSurface(this.salmon)) this.salmonMove();
       this.level.animate(this.ctx, this.salmon);
