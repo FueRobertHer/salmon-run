@@ -11,7 +11,7 @@ export default class Prey extends MovingObj {
     this.height = height;
     
     this.foodValue = 0;
-    this.eaten = false
+    this.eaten = false;
 
     this.img = new Image();
     // this.img.src = "./assets/images/zoo-plankton.png";

@@ -7,6 +7,9 @@ export default class MovingObj {
     this.width = width;
     this.height = height;
 
+    this.xVel = 0;
+    this.yVel = 0;
+
     // this.img = new Image();
     // this.img.src = "./assets/images/zoo-plankton.png";
   }
@@ -43,18 +46,20 @@ export default class MovingObj {
     // ctx.restore();
   }
 
-  // update() {
-  //   const frameSpeed = 10;
-  //   const endFrame = 3
+  update() {
+    this.x += this.xVel
+    // this.y += this.yVel
+    // const frameSpeed = 10;
+    // const endFrame = 3
 
-  //   if (this.counter === (frameSpeed - 1)) {
-  //     this.currentFrame = (this.currentFrame + 1) % endFrame;
-  //   }
-  //   this.counter = (this.counter + 1) % frameSpeed;
-  // }
+    // if (this.counter === (frameSpeed - 1)) {
+    //   this.currentFrame = (this.currentFrame + 1) % endFrame;
+    // }
+    // this.counter = (this.counter + 1) % frameSpeed;
+  }
 
   animate(ctx) {
-    // this.update();
+    this.update();
     this.draw(ctx);
   }
 

@@ -492,7 +492,7 @@ function (_Prey) {
     _this.y = pos[1];
     _this.width = width;
     _this.height = height;
-    _this.foodValue = 4;
+    _this.foodValue = 2;
     _this.eaten = false;
     _this.img = new Image();
     _this.img.src = "./assets/images/krill.png";
@@ -553,7 +553,7 @@ function () {
 
       //loop through air, water, ground arrays and build them
       this.air = new _air__WEBPACK_IMPORTED_MODULE_0__["default"]([0, 0], this.width, this.height);
-      this.water = new _water__WEBPACK_IMPORTED_MODULE_1__["default"]([0, -100], this.width, this.height, 'rect');
+      this.water = new _water__WEBPACK_IMPORTED_MODULE_1__["default"]([0, 200], this.width, this.height - 200, 'rect');
       this.rawGrounds = [{
         pos: [0, this.height - 50],
         width: this.width,
@@ -574,8 +574,10 @@ function () {
       this.food = [];
 
       for (var i = 0; i < num; i++) {
-        var foodItem = new _zoo_plankton__WEBPACK_IMPORTED_MODULE_3__["default"](this.water.randomPos(), 5, 5);
-        this.food.push(foodItem);
+        // const foodItem = new ZooPlankton(this.water.randomPos(), 5, 5);
+        // this.food.push(foodItem)
+        var krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"](this.water.randomPos(), 15, 15);
+        this.food.push(krill);
       } // this.zooP = new ZooPlankton(this.water.randomPos(), 5, 5);
 
 
@@ -599,6 +601,8 @@ function () {
   }, {
     key: "animate",
     value: function animate(ctx, salmon) {
+      var _this2 = this;
+
       // loop through air, water, ground arrays and apply their effects to salmon
       this.air.applyAir(salmon);
       this.water.applyCurrent(salmon);
@@ -619,6 +623,8 @@ function () {
         return ground.animate(ctx);
       });
       this.food.forEach(function (prey) {
+        _this2.water.applyCurrent(prey);
+
         prey.animate(ctx);
       }); // this.zooP.animate(ctx);
 
@@ -659,7 +665,9 @@ function () {
     this.x = pos[0];
     this.y = pos[1];
     this.width = width;
-    this.height = height; // this.img = new Image();
+    this.height = height;
+    this.xVel = 0;
+    this.yVel = 0; // this.img = new Image();
     // this.img.src = "./assets/images/zoo-plankton.png";
   }
 
@@ -699,19 +707,22 @@ function () {
       // ctx.fillRect(this.x, this.y, this.width, this.height);
       // ctx.restore();
 
-    } // update() {
-    //   const frameSpeed = 10;
-    //   const endFrame = 3
-    //   if (this.counter === (frameSpeed - 1)) {
-    //     this.currentFrame = (this.currentFrame + 1) % endFrame;
-    //   }
-    //   this.counter = (this.counter + 1) % frameSpeed;
-    // }
-
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.x += this.xVel; // this.y += this.yVel
+      // const frameSpeed = 10;
+      // const endFrame = 3
+      // if (this.counter === (frameSpeed - 1)) {
+      //   this.currentFrame = (this.currentFrame + 1) % endFrame;
+      // }
+      // this.counter = (this.counter + 1) % frameSpeed;
+    }
   }, {
     key: "animate",
     value: function animate(ctx) {
-      // this.update();
+      this.update();
       this.draw(ctx);
     }
   }, {
@@ -1009,7 +1020,7 @@ function () {
     key: "restart",
     value: function restart() {
       this.running = false;
-      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](40);
+      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](30);
       this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions);
       this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
       this.camera.follow(this.salmon);
@@ -1126,12 +1137,12 @@ function (_Element) {
     _this.width = width;
     _this.height = height;
     _this.shape = shape;
-    _this.left = _this.pos[0];
-    _this.top = _this.pos[1];
+    _this.left = pos[0];
+    _this.top = pos[1];
     _this.right = _this.left + _this.width;
     _this.bottom = _this.top + _this.height;
     _this.friction = 0.8;
-    _this.current = .1;
+    _this.current = -.1;
     _this.buoyancy = -0.5;
     return _this;
   }
@@ -1139,23 +1150,22 @@ function (_Element) {
   _createClass(Water, [{
     key: "randomPos",
     value: function randomPos() {
-      var randomX = Math.floor(Math.random() * this.width) + this.left;
-      var randomY = Math.floor(Math.random() * this.height) + this.top;
+      var randomX = Math.floor(Math.random() * this.width);
+      var randomY = Math.floor(Math.random() * (this.height - 50) + this.top);
       return [randomX, randomY];
     }
   }, {
     key: "applyCurrent",
-    value: function applyCurrent(salmon) {
-      if (this.salmonIsIn(salmon) && this.shape === 'rect') {
-        salmon.xVel *= this.friction;
-        salmon.yVel *= this.friction; // salmon.xVel += this.current;
-
-        salmon.yVel += this.buoyancy;
-      } else if (this.inWater(salmon) && this.shape === 'circle') {
-        salmon.xVel *= this.friction;
-        salmon.yVel *= this.friction; // salmon.xVel += this.current;
-
-        salmon.yVel += this.buoyancy;
+    value: function applyCurrent(obj) {
+      if (this.salmonIsIn(obj) && this.shape === 'rect') {
+        obj.xVel *= this.friction;
+        obj.yVel *= this.friction;
+        obj.xVel += this.current;
+        obj.yVel += this.buoyancy; // } else if (this.inWater(salmon) && this.shape === 'circle') {
+        //   salmon.xVel *= this.friction;
+        //   salmon.yVel *= this.friction;
+        //   // salmon.xVel += this.current;
+        //   salmon.yVel += this.buoyancy;
       }
     }
   }, {
@@ -1181,14 +1191,13 @@ function (_Element) {
   }, {
     key: "drawWater",
     value: function drawWater(ctx) {
-      ctx.fillStyle = "rgba(150, 205, 255, 0.5)";
+      ctx.fillStyle = "rgba(150, 205, 255, 0.8)";
 
       if (this.shape === 'rect') {
-        ctx.fillRect(this.left, this.top, this.width, this.height);
-      } else if (this.shape === 'circle') {
-        ctx.beginPath();
-        ctx.arc(this.pos[0], this.pos[1], this.width / 6, 0, 360);
-        ctx.fill();
+        ctx.fillRect(this.left, this.top, this.width, this.height); // } else if (this.shape === 'circle') {
+        //   ctx.beginPath();
+        //   ctx.arc(this.pos[0], this.pos[1], this.width/6, 0, 360)
+        //   ctx.fill();
       }
     }
   }, {

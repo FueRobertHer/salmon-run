@@ -9,34 +9,34 @@ export default class Water extends Element {
     this.height = height;
     this.shape = shape;
 
-    this.left = this.pos[0];
-    this.top = this.pos[1];
+    this.left = pos[0];
+    this.top = pos[1];
     this.right = this.left + this.width;
     this.bottom = this.top + this.height;
     
     this.friction = 0.8;
-    this.current = .1;
+    this.current = -.1;
     this.buoyancy = -0.5;
   }
 
   randomPos() {
-    const randomX = Math.floor(Math.random() * this.width) + this.left;
-    const randomY = Math.floor(Math.random() * this.height) + this.top;
+    const randomX = Math.floor(Math.random() * this.width);
+    const randomY = Math.floor(Math.random() * (this.height - 50) + this.top);
 
     return [randomX, randomY];
   }
 
-  applyCurrent(salmon) {
-    if (this.salmonIsIn(salmon) && this.shape === 'rect') {
-      salmon.xVel *= this.friction;
-      salmon.yVel *= this.friction;
-      // salmon.xVel += this.current;
-      salmon.yVel += this.buoyancy;
-    } else if (this.inWater(salmon) && this.shape === 'circle') {
-      salmon.xVel *= this.friction;
-      salmon.yVel *= this.friction;
-      // salmon.xVel += this.current;
-      salmon.yVel += this.buoyancy;
+  applyCurrent(obj) {
+    if (this.salmonIsIn(obj) && this.shape === 'rect') {
+      obj.xVel *= this.friction;
+      obj.yVel *= this.friction;
+      obj.xVel += this.current;
+      obj.yVel += this.buoyancy;
+    // } else if (this.inWater(salmon) && this.shape === 'circle') {
+    //   salmon.xVel *= this.friction;
+    //   salmon.yVel *= this.friction;
+    //   // salmon.xVel += this.current;
+    //   salmon.yVel += this.buoyancy;
     }
   }
 
@@ -63,13 +63,13 @@ export default class Water extends Element {
   }
 
   drawWater(ctx) {
-    ctx.fillStyle = "rgba(150, 205, 255, 0.5)";
+    ctx.fillStyle = "rgba(150, 205, 255, 0.8)";
     if (this.shape === 'rect') {
       ctx.fillRect(this.left, this.top, this.width, this.height);
-    } else if (this.shape === 'circle') {
-      ctx.beginPath();
-      ctx.arc(this.pos[0], this.pos[1], this.width/6, 0, 360)
-      ctx.fill();
+    // } else if (this.shape === 'circle') {
+    //   ctx.beginPath();
+    //   ctx.arc(this.pos[0], this.pos[1], this.width/6, 0, 360)
+    //   ctx.fill();
     }
   }
 

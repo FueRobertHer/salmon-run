@@ -17,7 +17,7 @@ export default class Level {
   buildLevel() {
     //loop through air, water, ground arrays and build them
     this.air = new Air ([0,0], this.width, this.height);
-    this.water = new Water([0,-100], this.width, this.height, 'rect');
+    this.water = new Water([0,200], this.width, this.height - 200, 'rect');
     
     this.rawGrounds = [
       {pos: [0, this.height - 50], width: this.width, height: (this.height - 350)},
@@ -35,8 +35,11 @@ export default class Level {
   generateFood(num) {
     this.food = []
     for (let i = 0; i < num; i++) {
-      const foodItem = new ZooPlankton(this.water.randomPos(), 5, 5);
-      this.food.push(foodItem)
+      // const foodItem = new ZooPlankton(this.water.randomPos(), 5, 5);
+      // this.food.push(foodItem)
+      const krill = new Krill(this.water.randomPos(), 15, 15);
+      this.food.push(krill)
+
     }
     // this.zooP = new ZooPlankton(this.water.randomPos(), 5, 5);
     this.krill = new Krill(this.water.randomPos(), 15, 15);
@@ -73,7 +76,10 @@ export default class Level {
     // this.ground.animate(ctx);
     this.grounds.forEach( ground => ground.animate(ctx));
 
-    this.food.forEach( prey => {prey.animate(ctx)})
+    this.food.forEach(prey => {
+      this.water.applyCurrent(prey)
+      prey.animate(ctx)
+    })
     // this.zooP.animate(ctx);
     this.krill.animate(ctx);
   }

@@ -44,7 +44,7 @@ export default class SalmonRun {
 
   restart() {
     this.running = false;
-    this.salmon = new Salmon(40);
+    this.salmon = new Salmon(30);
     this.level = new Level(this.dimensions);
     this.camera = new Camera(0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
     this.camera.follow(this.salmon);
