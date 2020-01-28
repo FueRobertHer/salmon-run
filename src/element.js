@@ -10,6 +10,7 @@ export default class Element {
     this.bottom = this.top + this.height;
   }
   
+  //rect collision
   salmonIsIn(salmon) {
     const _overlap = (rect1, rect2) => {
       //check that they don't overlap in the x axis

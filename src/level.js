@@ -16,11 +16,11 @@ export default class Level {
 
   buildLevel() {
     //loop through air, water, ground arrays and build them
-    this.air = new Air ([0,0], this.width, 150);
-    this.water = new Water([0,150], this.width, this.height - 150 - 150);
+    this.air = new Air ([0,0], this.width, this.height);
+    this.water = new Water([0,-100], this.width, this.height, 'rect');
     
     this.rawGrounds = [
-      {pos: [0, this.height - 350], width: this.width, height: (this.height - 350 - 150)},
+      {pos: [0, this.height - 50], width: this.width, height: (this.height - 350)},
       // {pos: [700, 140], width: 50, height: (this.height - 350 - 150)}
     ]
     this.grounds = []

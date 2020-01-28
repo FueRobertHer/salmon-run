@@ -275,7 +275,8 @@ function () {
     this.top = this.pos[1];
     this.right = this.left + this.width;
     this.bottom = this.top + this.height;
-  }
+  } //rect collision
+
 
   _createClass(Element, [{
     key: "salmonIsIn",
@@ -551,12 +552,12 @@ function () {
       var _this = this;
 
       //loop through air, water, ground arrays and build them
-      this.air = new _air__WEBPACK_IMPORTED_MODULE_0__["default"]([0, 0], this.width, 150);
-      this.water = new _water__WEBPACK_IMPORTED_MODULE_1__["default"]([0, 150], this.width, this.height - 150 - 150);
+      this.air = new _air__WEBPACK_IMPORTED_MODULE_0__["default"]([0, 0], this.width, this.height);
+      this.water = new _water__WEBPACK_IMPORTED_MODULE_1__["default"]([0, -100], this.width, this.height, 'rect');
       this.rawGrounds = [{
-        pos: [0, this.height - 350],
+        pos: [0, this.height - 50],
         width: this.width,
-        height: this.height - 350 - 150
+        height: this.height - 350
       } // {pos: [700, 140], width: 50, height: (this.height - 350 - 150)}
       ];
       this.grounds = [];
@@ -1008,7 +1009,7 @@ function () {
     key: "restart",
     value: function restart() {
       this.running = false;
-      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](20);
+      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](40);
       this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions);
       this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
       this.camera.follow(this.salmon);
@@ -1115,22 +1116,23 @@ var Water =
 function (_Element) {
   _inherits(Water, _Element);
 
-  function Water(pos, width, height) {
+  function Water(pos, width, height, shape) {
     var _this;
 
     _classCallCheck(this, Water);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Water).call(this, pos, width, height));
-    _this.pos = pos;
+    _this.pos = [pos[0] + width / 2, pos[1] + height / 2];
     _this.width = width;
     _this.height = height;
+    _this.shape = shape;
     _this.left = _this.pos[0];
     _this.top = _this.pos[1];
     _this.right = _this.left + _this.width;
     _this.bottom = _this.top + _this.height;
     _this.friction = 0.8;
     _this.current = .1;
-    _this.buoyancy = -0.75;
+    _this.buoyancy = -0.5;
     return _this;
   }
 
@@ -1143,21 +1145,51 @@ function (_Element) {
     }
   }, {
     key: "applyCurrent",
-    value: function applyCurrent(salmon) {// if (this.salmonIsIn(salmon)) {
-      //   salmon.xVel *= this.friction;
-      //   salmon.yVel *= this.friction;
-      //   salmon.xVel += this.current;
-      //   salmon.yVel += this.buoyancy;
-      // }
+    value: function applyCurrent(salmon) {
+      if (this.salmonIsIn(salmon) && this.shape === 'rect') {
+        salmon.xVel *= this.friction;
+        salmon.yVel *= this.friction; // salmon.xVel += this.current;
+
+        salmon.yVel += this.buoyancy;
+      } else if (this.inWater(salmon) && this.shape === 'circle') {
+        salmon.xVel *= this.friction;
+        salmon.yVel *= this.friction; // salmon.xVel += this.current;
+
+        salmon.yVel += this.buoyancy;
+      }
+    }
+  }, {
+    key: "inWater",
+    value: function inWater(salmon) {
+      var _overlap = function _overlap(rect1, rect2) {
+        var obj1Radius = rect1.width / 2;
+        var obj2Radius = rect2.height / 2;
+        var totalRadius = obj1Radius + obj2Radius;
+        var a = rect2.x - rect1.pos[0];
+        var b = rect2.y - rect1.pos[1];
+        var c = Math.sqrt(a * a + b * b); //check that they don't overlap in the x axis
+
+        console.log(c > totalRadius);
+        if (c < totalRadius) return true;
+        return false;
+      };
+
+      var isIn = false;
+      if (_overlap(this, salmon)) isIn = true;
+      return _overlap(this, salmon);
     }
   }, {
     key: "drawWater",
     value: function drawWater(ctx) {
-      ctx.fillStyle = "rgba(150, 205, 255, 0.5)"; // ctx.fillRect(this.pos[0], this.pos[1], this.width, this.height);
+      ctx.fillStyle = "rgba(150, 205, 255, 0.5)";
 
-      ctx.beginPath();
-      ctx.arc(this.pos[0], this.pos[1], this.width / 6, 0, 360);
-      ctx.fill();
+      if (this.shape === 'rect') {
+        ctx.fillRect(this.left, this.top, this.width, this.height);
+      } else if (this.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(this.pos[0], this.pos[1], this.width / 6, 0, 360);
+        ctx.fill();
+      }
     }
   }, {
     key: "animate",
