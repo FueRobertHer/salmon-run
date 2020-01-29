@@ -45,7 +45,15 @@ export default class SalmonRun {
   }
 
   gameOver() {
-    return !this.salmon.alive
+    return !this.salmon.alive || this.timeZero()
+  }
+
+  timeZero() {
+    return this.timeleft() === 0
+  }
+
+  timeleft() {
+    return this.camera.countdown
   }
 
   restart() {

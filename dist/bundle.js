@@ -1082,7 +1082,17 @@ function () {
   }, {
     key: "gameOver",
     value: function gameOver() {
-      return !this.salmon.alive;
+      return !this.salmon.alive || this.timeZero();
+    }
+  }, {
+    key: "timeZero",
+    value: function timeZero() {
+      return this.timeleft() === 0;
+    }
+  }, {
+    key: "timeleft",
+    value: function timeleft() {
+      return this.camera.countdown;
     }
   }, {
     key: "restart",
