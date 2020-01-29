@@ -18,7 +18,7 @@ export default class Camera {
     this.salmonSize = 0
     this.gameover = false
 
-    this.countdown = 2
+    this.countdown = 60
 
     this.count = setInterval(() => {
       this.countdown--
@@ -93,9 +93,9 @@ export default class Camera {
     ctx.font = "50px Baloo";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
-    let text = "You Ate: " + this.score
+    let text = "Food Score: " + this.score
     ctx.fillText(text, this.width / 2, this.height / 3);
-    text = "Your Size: " + this.salmonSize
+    text = "Salmon Size: " + this.salmonSize
     ctx.fillText(text, this.width / 2, (this.height / 3)*2);
 
   }

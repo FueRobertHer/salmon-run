@@ -203,7 +203,7 @@ function () {
     this.score = 0;
     this.salmonSize = 0;
     this.gameover = false;
-    this.countdown = 2;
+    this.countdown = 60;
     this.count = setInterval(function () {
       _this.countdown--;
     }, 1000);
@@ -290,9 +290,9 @@ function () {
       ctx.font = "50px Baloo";
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
-      var text = "You Ate: " + this.score;
+      var text = "Food Score: " + this.score;
       ctx.fillText(text, this.width / 2, this.height / 3);
-      text = "Your Size: " + this.salmonSize;
+      text = "Salmon Size: " + this.salmonSize;
       ctx.fillText(text, this.width / 2, this.height / 3 * 2);
     }
   }, {
@@ -581,7 +581,7 @@ function (_Prey) {
     _this.y = pos[1];
     _this.width = width;
     _this.height = height;
-    _this.foodValue = 1;
+    _this.foodValue = 3;
     _this.eaten = false;
     _this.img = new Image();
     _this.img.src = "./assets/images/krill.png";
@@ -889,9 +889,9 @@ function (_MovingObj) {
   _createClass(Prey, [{
     key: "moveRandomly",
     value: function moveRandomly() {
-      this.x += Math.floor(Math.random() * 2);
-      this.x -= Math.floor(Math.random() * 5);
-      this.y += Math.floor(Math.random() * 2);
+      this.x += Math.floor(Math.random() * 5);
+      this.x -= Math.floor(Math.random() * 4);
+      this.y += Math.floor(Math.random() * 3);
       this.y -= Math.floor(Math.random() * 2);
     }
   }, {
@@ -993,7 +993,7 @@ function () {
   }, {
     key: "grow",
     value: function grow() {
-      this.width = this.initialWidth + Math.floor(this.totalEaten / 3);
+      this.width = this.initialWidth + Math.floor(Math.sqrt(this.totalEaten));
     }
   }, {
     key: "drawSalmon",
@@ -1137,7 +1137,7 @@ function () {
     key: "restart",
     value: function restart() {
       this.running = false;
-      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](30);
+      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](50);
       this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions);
       this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
       this.camera.follow(this.salmon);

@@ -18,9 +18,9 @@ export default class Prey extends MovingObj {
   }
 
   moveRandomly() {
-    this.x += Math.floor(Math.random() * 2)
-    this.x -= Math.floor(Math.random() * 5)
-    this.y += Math.floor(Math.random() * 2)
+    this.x += Math.floor(Math.random() * 5)
+    this.x -= Math.floor(Math.random() * 4)
+    this.y += Math.floor(Math.random() * 3)
     this.y -= Math.floor(Math.random() * 2)
   }
 
