@@ -18,7 +18,7 @@ export default class Camera {
     this.salmonSize = 0
     this.gameover = false
 
-    this.countdown = 2
+    this.countdown = 60
 
     this.count = setInterval(() => {
       this.countdown--
