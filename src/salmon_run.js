@@ -31,9 +31,8 @@ export default class SalmonRun {
 
   play() {
     if (!this.running) {
-      this.running = true;
+      this.unpause()
       this.animate();
-      this.camera.unpause()
     }
   }
 
@@ -42,6 +41,11 @@ export default class SalmonRun {
       this.running = false;
       this.camera.pause()
     }
+  }
+
+  unpause() {
+    this.running = true;
+    this.camera.unpause()
   }
 
   gameOver() {
@@ -78,14 +82,19 @@ export default class SalmonRun {
 
   keyDown(e) {
     // console.log(e.key)
-    
+    // controls
     if (e.key === 'w' || e.key === 'ArrowUp') this.moveInput.up = true;
     if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
     if (e.key === 's' || e.key === 'ArrowDown') this.moveInput.down = true;
     if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true;
 
+    // gameplay controls
     if (e.key === 'p' || e.key === 'Escape') this.pause()
     if (e.key === ' ') this.play()
+    if (e.key === ' ' && this.gameOver()) {
+      this.restart() 
+      this.unpause()
+    }
   }
 
   keyUp(e) {
@@ -127,9 +136,6 @@ export default class SalmonRun {
 
   playGameover() {
     this.showScore()
-    // this.restart();
-    // if (this.gameOver()) {
-    // }
   }
 
   animate() {

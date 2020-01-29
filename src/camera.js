@@ -18,7 +18,7 @@ export default class Camera {
     this.salmonSize = 0
     this.gameover = false
 
-    this.countdown = 60
+    this.countdown = 2
 
     this.count = setInterval(() => {
       this.countdown--
@@ -86,23 +86,38 @@ export default class Camera {
     this.gameover = true
   }
 
-  showScore(ctx) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, this.width, this.height)
+  showEndScreen(ctx) {
+    this.blackScreen(ctx)
+    this.showScore(ctx)
+    this.showReplay(ctx)
+  }
 
+  showReplay(ctx) {
+    ctx.font = "20px Baloo";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    let text = "Press Space to Replay"
+    ctx.fillText(text, this.width / 2, (this.height / 3) * 2.5);
+  }
+
+  showScore(ctx) {
     ctx.font = "50px Baloo";
     ctx.fillStyle = "white";
     ctx.textAlign = "center";
     let text = "Food Score: " + this.score
     ctx.fillText(text, this.width / 2, this.height / 3);
     text = "Salmon Size: " + this.salmonSize
-    ctx.fillText(text, this.width / 2, (this.height / 3)*2);
+    ctx.fillText(text, this.width / 2, (this.height / 3) * 1.5);
+  }
 
+  blackScreen(ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, this.width, this.height)
   }
 
   draw(ctx, img) {
     if (this.gameover) {
-      this.showScore(ctx)
+      this.showEndScreen(ctx)
     } else {
       ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
       this.drawCountdown(ctx)

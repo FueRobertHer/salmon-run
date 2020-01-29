@@ -203,7 +203,7 @@ function () {
     this.score = 0;
     this.salmonSize = 0;
     this.gameover = false;
-    this.countdown = 60;
+    this.countdown = 2;
     this.count = setInterval(function () {
       _this.countdown--;
     }, 1000);
@@ -283,23 +283,43 @@ function () {
       this.gameover = true;
     }
   }, {
+    key: "showEndScreen",
+    value: function showEndScreen(ctx) {
+      this.blackScreen(ctx);
+      this.showScore(ctx);
+      this.showReplay(ctx);
+    }
+  }, {
+    key: "showReplay",
+    value: function showReplay(ctx) {
+      ctx.font = "20px Baloo";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      var text = "Press Space to Replay";
+      ctx.fillText(text, this.width / 2, this.height / 3 * 2.5);
+    }
+  }, {
     key: "showScore",
     value: function showScore(ctx) {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, this.width, this.height);
       ctx.font = "50px Baloo";
       ctx.fillStyle = "white";
       ctx.textAlign = "center";
       var text = "Food Score: " + this.score;
       ctx.fillText(text, this.width / 2, this.height / 3);
       text = "Salmon Size: " + this.salmonSize;
-      ctx.fillText(text, this.width / 2, this.height / 3 * 2);
+      ctx.fillText(text, this.width / 2, this.height / 3 * 1.5);
+    }
+  }, {
+    key: "blackScreen",
+    value: function blackScreen(ctx) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, this.width, this.height);
     }
   }, {
     key: "draw",
     value: function draw(ctx, img) {
       if (this.gameover) {
-        this.showScore(ctx);
+        this.showEndScreen(ctx);
       } else {
         ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
         this.drawCountdown(ctx);
@@ -1109,9 +1129,8 @@ function () {
     key: "play",
     value: function play() {
       if (!this.running) {
-        this.running = true;
+        this.unpause();
         this.animate();
-        this.camera.unpause();
       }
     }
   }, {
@@ -1121,6 +1140,12 @@ function () {
         this.running = false;
         this.camera.pause();
       }
+    }
+  }, {
+    key: "unpause",
+    value: function unpause() {
+      this.running = true;
+      this.camera.unpause();
     }
   }, {
     key: "gameOver",
@@ -1163,12 +1188,19 @@ function () {
     key: "keyDown",
     value: function keyDown(e) {
       // console.log(e.key)
+      // controls
       if (e.key === 'w' || e.key === 'ArrowUp') this.moveInput.up = true;
       if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
       if (e.key === 's' || e.key === 'ArrowDown') this.moveInput.down = true;
-      if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true;
+      if (e.key === 'd' || e.key === 'ArrowRight') this.moveInput.right = true; // gameplay controls
+
       if (e.key === 'p' || e.key === 'Escape') this.pause();
       if (e.key === ' ') this.play();
+
+      if (e.key === ' ' && this.gameOver()) {
+        this.restart();
+        this.unpause();
+      }
     }
   }, {
     key: "keyUp",
@@ -1213,9 +1245,7 @@ function () {
   }, {
     key: "playGameover",
     value: function playGameover() {
-      this.showScore(); // this.restart();
-      // if (this.gameOver()) {
-      // }
+      this.showScore();
     }
   }, {
     key: "animate",
