@@ -33,14 +33,14 @@ export default class SalmonRun {
     if (!this.running) {
       this.running = true;
       this.animate();
-      this.camera.paused = false
+      this.camera.unpause()
     }
   }
 
   pause() {
     if (this.running) {
       this.running = false;
-      this.camera.paused = true
+      this.camera.pause()
     }
   }
 

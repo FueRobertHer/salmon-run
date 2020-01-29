@@ -17,6 +17,16 @@ export default class Camera {
 
     this.countdown = 60
 
+    this.count = setInterval(() => {
+      this.countdown--
+    }, 1000);
+  }
+
+  stopCount() {
+    clearInterval(this.count)
+  }
+
+  startCountdown() {
     setInterval(() => {
       this.countdown--
     }, 1000);
@@ -24,6 +34,20 @@ export default class Camera {
 
   follow(salmon) {
     this.followed = salmon;
+  }
+
+  unpause() {
+    if (this.paused) {
+      this.paused = false
+      this.count = setInterval(() => {
+        this.countdown--
+      }, 1000);
+    }
+  }
+
+  pause() {
+    this.paused = true
+    this.stopCount()
   }
 
   update() {

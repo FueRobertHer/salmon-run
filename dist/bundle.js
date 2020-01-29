@@ -201,15 +201,47 @@ function () {
     this.followed = null;
     this.paused = false;
     this.countdown = 60;
-    setInterval(function () {
+    this.count = setInterval(function () {
       _this.countdown--;
     }, 1000);
   }
 
   _createClass(Camera, [{
+    key: "stopCount",
+    value: function stopCount() {
+      clearInterval(this.count);
+    }
+  }, {
+    key: "startCountdown",
+    value: function startCountdown() {
+      var _this2 = this;
+
+      setInterval(function () {
+        _this2.countdown--;
+      }, 1000);
+    }
+  }, {
     key: "follow",
     value: function follow(salmon) {
       this.followed = salmon;
+    }
+  }, {
+    key: "unpause",
+    value: function unpause() {
+      var _this3 = this;
+
+      if (this.paused) {
+        this.paused = false;
+        this.count = setInterval(function () {
+          _this3.countdown--;
+        }, 1000);
+      }
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      this.paused = true;
+      this.stopCount();
     }
   }, {
     key: "update",
@@ -1036,7 +1068,7 @@ function () {
       if (!this.running) {
         this.running = true;
         this.animate();
-        this.camera.paused = false;
+        this.camera.unpause();
       }
     }
   }, {
@@ -1044,7 +1076,7 @@ function () {
     value: function pause() {
       if (this.running) {
         this.running = false;
-        this.camera.paused = true;
+        this.camera.pause();
       }
     }
   }, {
