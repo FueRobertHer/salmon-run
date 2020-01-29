@@ -14,12 +14,16 @@ export default class Camera {
 
     this.followed = null;
     this.paused = false
+    this.score = 0
+    this.salmonSize = 0
+    this.gameover = false
 
-    this.countdown = 60
+    this.countdown = 2
 
     this.count = setInterval(() => {
       this.countdown--
     }, 1000);
+    this.pause()
   }
 
   stopCount() {
@@ -50,6 +54,10 @@ export default class Camera {
     this.stopCount()
   }
 
+  timeUp() {
+    if (this.countdown === 0) this.stopCount()
+  }
+
   update() {
     if (this.followed != null) {
       if (this.followed.bounds().left < this.width/2) {
@@ -68,19 +76,42 @@ export default class Camera {
         this.y = this.followed.bounds().top - this.height/2;
       }
     }
+
+    this.timeUp()
   }
 
+  takeScore(score, size) {
+    this.score = score
+    this.salmonSize = size
+    this.gameover = true
+  }
 
+  showScore(ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, this.width, this.height)
+
+    ctx.font = "50px Baloo";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    let text = "You Ate: " + this.score
+    ctx.fillText(text, this.width / 2, this.height / 3);
+    text = "Your Size: " + this.salmonSize
+    ctx.fillText(text, this.width / 2, (this.height / 3)*2);
+
+  }
 
   draw(ctx, img) {
-    ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
-    this.drawCountdown(ctx)
-
-    if (this.paused) {
-      ctx.font = "80px Baloo";
-      ctx.fillStyle = "black";
-      ctx.textAlign = "center";
-      ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+    if (this.gameover) {
+      this.showScore(ctx)
+    } else {
+      ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+      this.drawCountdown(ctx)
+  
+      if (this.paused) {
+        ctx.font = "80px Baloo";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+      }
     }
   }
 
@@ -93,7 +124,7 @@ export default class Camera {
 
   animate(ctx, img) {
     ctx.clearRect(0, 0, this.width, this.height)
-    this.update();
+    if (!this.gameover) this.update();
     this.draw(ctx, img)
   }
 }

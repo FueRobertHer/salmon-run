@@ -5,8 +5,8 @@ const CONSTANTS = {
 
 export default class Salmon {
   constructor(width) {
-    this.x = 100;
-    this.y = 250;
+    this.x = 150;
+    this.y = 350;
 
     this.initialWidth = width;
 
@@ -40,6 +40,10 @@ export default class Salmon {
       this.yVel = CONSTANTS.TERMINAL_VEL;
     }
     
+  }
+
+  grow() {
+    this.width = this.initialWidth + Math.floor(this.totalEaten / 3)
   }
 
   drawSalmon(ctx) {

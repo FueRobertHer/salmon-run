@@ -103,22 +103,38 @@ export default class SalmonRun {
     this.level.inLevel(this.salmon)
   }
 
-  animate() {
-    this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height)
+  salmonTotalEaten() {
+    return this.salmon.totalEaten
+  }
 
+  showScore() {
+    this.camera.takeScore(this.salmonTotalEaten(), this.salmon.width)
+  }
+
+  playGame() {
     if (this.level.atSurface(this.salmon)) this.salmonMove();
 
     this.level.animate(this.ctx, this.salmon);
     this.salmon.animate(this.ctx);
     this.camera.animate(this.cam, this.canvas)
 
-    if (this.gameOver()) {
-      this.restart();
-    }
+    if (this.gameOver()) this.playGameover()
 
     if (this.running) {
       requestAnimationFrame(this.animate.bind(this))
     }
+  }
+
+  playGameover() {
+    this.showScore()
+    // this.restart();
+    // if (this.gameOver()) {
+    // }
+  }
+
+  animate() {
+    this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height)
+    this.playGame()
   }
 
 }

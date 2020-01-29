@@ -28,7 +28,7 @@ export default class Prey extends MovingObj {
     if (this.collide(salmon)) {
       if (!this.eaten) {
         salmon.totalEaten += this.foodValue;
-        salmon.width = salmon.initialWidth + salmon.totalEaten;
+        salmon.grow();
         this.eaten = true;
       }
     }

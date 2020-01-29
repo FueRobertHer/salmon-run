@@ -200,10 +200,14 @@ function () {
     this.mapHeight = mapHeight;
     this.followed = null;
     this.paused = false;
-    this.countdown = 60;
+    this.score = 0;
+    this.salmonSize = 0;
+    this.gameover = false;
+    this.countdown = 2;
     this.count = setInterval(function () {
       _this.countdown--;
     }, 1000);
+    this.pause();
   }
 
   _createClass(Camera, [{
@@ -244,6 +248,11 @@ function () {
       this.stopCount();
     }
   }, {
+    key: "timeUp",
+    value: function timeUp() {
+      if (this.countdown === 0) this.stopCount();
+    }
+  }, {
     key: "update",
     value: function update() {
       if (this.followed != null) {
@@ -263,18 +272,43 @@ function () {
           this.y = this.followed.bounds().top - this.height / 2;
         }
       }
+
+      this.timeUp();
+    }
+  }, {
+    key: "takeScore",
+    value: function takeScore(score, size) {
+      this.score = score;
+      this.salmonSize = size;
+      this.gameover = true;
+    }
+  }, {
+    key: "showScore",
+    value: function showScore(ctx) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, this.width, this.height);
+      ctx.font = "50px Baloo";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      var text = "You Ate: " + this.score;
+      ctx.fillText(text, this.width / 2, this.height / 3);
+      text = "Your Size: " + this.salmonSize;
+      ctx.fillText(text, this.width / 2, this.height / 3 * 2);
     }
   }, {
     key: "draw",
     value: function draw(ctx, img) {
-      ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
-      this.drawCountdown(ctx);
+      if (this.gameover) {
+        this.showScore(ctx);
+      } else {
+        ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+        this.drawCountdown(ctx);
 
-      if (this.paused) {
-        ctx.font = "80px Baloo";
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+        if (this.paused) {
+          ctx.font = "80px Baloo";
+          ctx.textAlign = "center";
+          ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+        }
       }
     }
   }, {
@@ -289,7 +323,7 @@ function () {
     key: "animate",
     value: function animate(ctx, img) {
       ctx.clearRect(0, 0, this.width, this.height);
-      this.update();
+      if (!this.gameover) this.update();
       this.draw(ctx, img);
     }
   }]);
@@ -866,7 +900,7 @@ function (_MovingObj) {
       if (this.collide(salmon)) {
         if (!this.eaten) {
           salmon.totalEaten += this.foodValue;
-          salmon.width = salmon.initialWidth + salmon.totalEaten;
+          salmon.grow();
           this.eaten = true;
         }
       }
@@ -907,8 +941,8 @@ function () {
   function Salmon(width) {
     _classCallCheck(this, Salmon);
 
-    this.x = 100;
-    this.y = 250;
+    this.x = 150;
+    this.y = 350;
     this.initialWidth = width;
     this.width = this.initialWidth;
     this.height = this.width * .56;
@@ -955,6 +989,11 @@ function () {
       if (this.yVel > CONSTANTS.TERMINAL_VEL) {
         this.yVel = CONSTANTS.TERMINAL_VEL;
       }
+    }
+  }, {
+    key: "grow",
+    value: function grow() {
+      this.width = this.initialWidth + Math.floor(this.totalEaten / 3);
     }
   }, {
     key: "drawSalmon",
@@ -1145,21 +1184,40 @@ function () {
       this.level.inLevel(this.salmon);
     }
   }, {
-    key: "animate",
-    value: function animate() {
-      this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
+    key: "salmonTotalEaten",
+    value: function salmonTotalEaten() {
+      return this.salmon.totalEaten;
+    }
+  }, {
+    key: "showScore",
+    value: function showScore() {
+      this.camera.takeScore(this.salmonTotalEaten(), this.salmon.width);
+    }
+  }, {
+    key: "playGame",
+    value: function playGame() {
       if (this.level.atSurface(this.salmon)) this.salmonMove();
       this.level.animate(this.ctx, this.salmon);
       this.salmon.animate(this.ctx);
       this.camera.animate(this.cam, this.canvas);
-
-      if (this.gameOver()) {
-        this.restart();
-      }
+      if (this.gameOver()) this.playGameover();
 
       if (this.running) {
         requestAnimationFrame(this.animate.bind(this));
       }
+    }
+  }, {
+    key: "playGameover",
+    value: function playGameover() {
+      this.showScore(); // this.restart();
+      // if (this.gameOver()) {
+      // }
+    }
+  }, {
+    key: "animate",
+    value: function animate() {
+      this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
+      this.playGame();
     }
   }]);
 
