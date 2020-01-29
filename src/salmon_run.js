@@ -39,6 +39,10 @@ export default class SalmonRun {
   pause() {
     if (this.running) {
       this.running = false;
+      this.cam.font = "30px Comic Sans MS";
+      this.cam.fillStyle = "red";
+      this.cam.textAlign = "center";
+      this.cam.fillText("PAUSE", this.camDim.width / 2, this.camDim.height / 2);
     }
   }
 
@@ -64,13 +68,10 @@ export default class SalmonRun {
 
   click(e) {
     if (!this.running) this.play();
-
-    // if (this.level.atSurface(this.salmon)) this.salmon.jump();
   }
 
   keyDown(e) {
-    // if (!this.running) this.play();
-    console.log(e.key)
+    // console.log(e.key)
     
     if (e.key === 'w' || e.key === 'ArrowUp') this.moveInput.up = true;
     if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
@@ -97,7 +98,6 @@ export default class SalmonRun {
   }
 
   animate() {
-    console.log(this.running)
     this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height)
 
     if (this.level.atSurface(this.salmon)) this.salmonMove();

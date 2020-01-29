@@ -20,10 +20,15 @@ export default class Water extends Element {
   }
 
   randomPos() {
-    const randomX = Math.floor(Math.random() * this.width);
-    const randomY = Math.floor(Math.random() * (this.height - 50) + this.top);
+    return [this.randomPos(), this.randomYPos()];
+  }
 
-    return [randomX, randomY];
+  randomXPos() {
+    return Math.floor(Math.random() * this.width);
+  }
+
+  randomYPos() {
+    return Math.floor(Math.random() * (this.height - 50) + this.top);
   }
 
   applyCurrent(obj) {

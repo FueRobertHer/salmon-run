@@ -149,7 +149,7 @@ function (_Element) {
   }, {
     key: "drawAir",
     value: function drawAir(ctx) {
-      ctx.fillStyle = "rgba(100, 100, 100, 0.1)";
+      ctx.fillStyle = "rgba(100, 100, 100, 0.8)";
       ctx.fillRect(this.pos[0], this.pos[1], this.width, this.height);
     }
   }, {
@@ -542,8 +542,9 @@ function () {
 
     this.width = dimensions.width;
     this.height = dimensions.height;
+    this.food = [];
+    this.enemies = [];
     this.buildLevel();
-    this.generateFood(100);
   }
 
   _createClass(Level, [{
@@ -571,17 +572,16 @@ function () {
   }, {
     key: "generateFood",
     value: function generateFood(num) {
-      this.food = [];
+      var lastFood = this.food.length - 1;
 
-      for (var i = 0; i < num; i++) {
-        // const foodItem = new ZooPlankton(this.water.randomPos(), 5, 5);
-        // this.food.push(foodItem)
-        var krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"](this.water.randomPos(), 15, 15);
+      if (this.food.length < num) {
+        var spacing;
+        this.food[lastFood] ? spacing = this.food[lastFood].x + 50 : spacing = this.width / 5;
+        spacing > this.width ? spacing = this.width : '';
+        var krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"]([spacing, this.water.randomYPos()], 15, 15);
         this.food.push(krill);
-      } // this.zooP = new ZooPlankton(this.water.randomPos(), 5, 5);
-
-
-      this.krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"](this.water.randomPos(), 15, 15);
+        console.log(this.food.length, krill.x);
+      }
     }
   }, {
     key: "atSurface",
@@ -609,12 +609,7 @@ function () {
       this.grounds.forEach(function (ground) {
         ground.stopSalmon(salmon);
       }); // this.ground.stopSalmon(salmon);
-
-      this.food.forEach(function (prey) {
-        prey.getEaten(salmon);
-      }); // this.zooP.getEaten(salmon);
-
-      this.krill.getEaten(salmon); // loop through air, water, ground arrays and draw them
+      // loop through air, water, ground arrays and draw them
 
       this.air.animate(ctx);
       this.water.animate(ctx); // this.ground.animate(ctx);
@@ -622,13 +617,16 @@ function () {
       this.grounds.forEach(function (ground) {
         return ground.animate(ctx);
       });
-      this.food.forEach(function (prey) {
+      this.generateFood(20);
+      this.food.forEach(function (prey, i) {
+        prey.getEaten(salmon);
+        if (prey.eaten || prey.x < 0 || prey.x > _this2.width) _this2.food.splice(i, 1);
+
         _this2.water.applyCurrent(prey);
 
+        prey.moveRandomly();
         prey.animate(ctx);
-      }); // this.zooP.animate(ctx);
-
-      this.krill.animate(ctx);
+      });
     }
   }]);
 
@@ -799,6 +797,14 @@ function (_MovingObj) {
   }
 
   _createClass(Prey, [{
+    key: "moveRandomly",
+    value: function moveRandomly() {
+      this.x += Math.floor(Math.random() * 2);
+      this.x -= Math.floor(Math.random() * 5);
+      this.y += Math.floor(Math.random() * 2);
+      this.y -= Math.floor(Math.random() * 2);
+    }
+  }, {
     key: "getEaten",
     value: function getEaten(salmon) {
       if (this.collide(salmon)) {
@@ -1013,6 +1019,10 @@ function () {
     value: function pause() {
       if (this.running) {
         this.running = false;
+        this.cam.font = "30px Comic Sans MS";
+        this.cam.fillStyle = "red";
+        this.cam.textAlign = "center";
+        this.cam.fillText("PAUSE", this.camDim.width / 2, this.camDim.height / 2);
       }
     }
   }, {
@@ -1040,13 +1050,12 @@ function () {
   }, {
     key: "click",
     value: function click(e) {
-      if (!this.running) this.play(); // if (this.level.atSurface(this.salmon)) this.salmon.jump();
+      if (!this.running) this.play();
     }
   }, {
     key: "keyDown",
     value: function keyDown(e) {
-      // if (!this.running) this.play();
-      console.log(e.key);
+      // console.log(e.key)
       if (e.key === 'w' || e.key === 'ArrowUp') this.moveInput.up = true;
       if (e.key === 'a' || e.key === 'ArrowLeft') this.moveInput.left = true;
       if (e.key === 's' || e.key === 'ArrowDown') this.moveInput.down = true;
@@ -1074,7 +1083,6 @@ function () {
   }, {
     key: "animate",
     value: function animate() {
-      console.log(this.running);
       this.ctx.clearRect(0, 0, this.dimensions.width, this.dimensions.height);
       if (this.level.atSurface(this.salmon)) this.salmonMove();
       this.level.animate(this.ctx, this.salmon);
@@ -1157,9 +1165,17 @@ function (_Element) {
   _createClass(Water, [{
     key: "randomPos",
     value: function randomPos() {
-      var randomX = Math.floor(Math.random() * this.width);
-      var randomY = Math.floor(Math.random() * (this.height - 50) + this.top);
-      return [randomX, randomY];
+      return [this.randomPos(), this.randomYPos()];
+    }
+  }, {
+    key: "randomXPos",
+    value: function randomXPos() {
+      return Math.floor(Math.random() * this.width);
+    }
+  }, {
+    key: "randomYPos",
+    value: function randomYPos() {
+      return Math.floor(Math.random() * (this.height - 50) + this.top);
     }
   }, {
     key: "applyCurrent",

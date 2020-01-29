@@ -9,9 +9,10 @@ export default class Level {
   constructor(dimensions) {
     this.width = dimensions.width;
     this.height = dimensions.height
+    this.food = []
+    this.enemies = []
 
     this.buildLevel();
-    this.generateFood(100);
   }
 
   buildLevel() {
@@ -33,16 +34,16 @@ export default class Level {
   }
 
   generateFood(num) {
-    this.food = []
-    for (let i = 0; i < num; i++) {
-      // const foodItem = new ZooPlankton(this.water.randomPos(), 5, 5);
-      // this.food.push(foodItem)
-      const krill = new Krill(this.water.randomPos(), 15, 15);
+    
+    let lastFood = this.food.length - 1
+    if (this.food.length < num) {
+      let spacing
+      this.food[lastFood] ? spacing = this.food[lastFood].x + 50 : spacing = this.width/5
+      spacing > this.width ? spacing = this.width : ''
+      const krill = new Krill([spacing, this.water.randomYPos()], 15, 15);
       this.food.push(krill)
-
+      console.log(this.food.length, krill.x)
     }
-    // this.zooP = new ZooPlankton(this.water.randomPos(), 5, 5);
-    this.krill = new Krill(this.water.randomPos(), 15, 15);
   }
 
   atSurface(salmon) {
@@ -66,9 +67,6 @@ export default class Level {
     this.grounds.forEach( ground => {ground.stopSalmon(salmon)});
     // this.ground.stopSalmon(salmon);
 
-    this.food.forEach( prey => {prey.getEaten(salmon)})
-    // this.zooP.getEaten(salmon);
-    this.krill.getEaten(salmon);
 
     // loop through air, water, ground arrays and draw them
     this.air.animate(ctx);
@@ -76,11 +74,14 @@ export default class Level {
     // this.ground.animate(ctx);
     this.grounds.forEach( ground => ground.animate(ctx));
 
-    this.food.forEach(prey => {
+    this.generateFood(20)
+
+    this.food.forEach((prey, i) => {
+      prey.getEaten(salmon)
+      if (prey.eaten || prey.x < 0 || prey.x > this.width) this.food.splice(i, 1)
       this.water.applyCurrent(prey)
+      prey.moveRandomly()
       prey.animate(ctx)
     })
-    // this.zooP.animate(ctx);
-    this.krill.animate(ctx);
   }
 }
