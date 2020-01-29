@@ -186,6 +186,8 @@ var Camera =
 /*#__PURE__*/
 function () {
   function Camera(x, y, width, height, mapWidth, mapHeight) {
+    var _this = this;
+
     _classCallCheck(this, Camera);
 
     this.x = x || 0;
@@ -198,6 +200,10 @@ function () {
     this.mapHeight = mapHeight;
     this.followed = null;
     this.paused = false;
+    this.countdown = 60;
+    setInterval(function () {
+      _this.countdown--;
+    }, 1000);
   }
 
   _createClass(Camera, [{
@@ -230,13 +236,22 @@ function () {
     key: "draw",
     value: function draw(ctx, img) {
       ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+      this.drawCountdown(ctx);
 
       if (this.paused) {
-        ctx.font = "30px Comic Sans MS";
-        ctx.fillStyle = "white";
+        ctx.font = "80px Baloo";
+        ctx.fillStyle = "black";
         ctx.textAlign = "center";
-        ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+        ctx.fillText("PAUSED", this.width / 2, this.height / 2);
       }
+    }
+  }, {
+    key: "drawCountdown",
+    value: function drawCountdown(ctx) {
+      ctx.font = "50px Baloo";
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.fillText(this.countdown, this.width / 2, 50);
     }
   }, {
     key: "animate",
@@ -1021,7 +1036,7 @@ function () {
       if (!this.running) {
         this.running = true;
         this.animate();
-        this.cam.paused = false;
+        this.camera.paused = false;
       }
     }
   }, {
@@ -1029,7 +1044,7 @@ function () {
     value: function pause() {
       if (this.running) {
         this.running = false;
-        this.cam.paused = true;
+        this.camera.paused = true;
       }
     }
   }, {

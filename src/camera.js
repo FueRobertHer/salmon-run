@@ -14,6 +14,12 @@ export default class Camera {
 
     this.followed = null;
     this.paused = false
+
+    this.countdown = 60
+
+    setInterval(() => {
+      this.countdown--
+    }, 1000);
   }
 
   follow(salmon) {
@@ -37,18 +43,28 @@ export default class Camera {
       } else {
         this.y = this.followed.bounds().top - this.height/2;
       }
-    
     }
   }
 
+
+
   draw(ctx, img) {
     ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+    this.drawCountdown(ctx)
+
     if (this.paused) {
-      ctx.font = "30px Comic Sans MS";
-      ctx.fillStyle = "white";
+      ctx.font = "80px Baloo";
+      ctx.fillStyle = "black";
       ctx.textAlign = "center";
-      ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("PAUSED", this.width / 2, this.height / 2);
     }
+  }
+
+  drawCountdown(ctx) {
+    ctx.font = "50px Baloo";
+    ctx.fillStyle = "black";
+    ctx.textAlign = "center";
+    ctx.fillText(this.countdown, this.width / 2, 50);
   }
 
   animate(ctx, img) {
