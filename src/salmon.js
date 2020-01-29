@@ -43,7 +43,7 @@ export default class Salmon {
   }
 
   grow() {
-    this.width = this.initialWidth + Math.floor(Math.sqrt(this.totalEaten))
+    this.width = this.initialWidth + Math.floor(this.totalEaten/3)
   }
 
   drawSalmon(ctx) {

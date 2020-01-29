@@ -689,10 +689,24 @@ function () {
       }
     }
   }, {
-    key: "animate",
-    value: function animate(ctx, salmon) {
+    key: "animateFood",
+    value: function animateFood(ctx, salmon) {
       var _this2 = this;
 
+      this.generateFood(8);
+      this.food.forEach(function (prey, i) {
+        prey.getEaten(salmon);
+        if (prey.eaten || prey.x < 0 || prey.x > _this2.width || prey.y > _this2.height) _this2.food.splice(i, 1);
+
+        _this2.water.applyCurrent(prey);
+
+        prey.moveRandomly();
+        prey.animate(ctx);
+      });
+    }
+  }, {
+    key: "animateEnv",
+    value: function animateEnv(ctx, salmon) {
       // loop through air, water, ground arrays and apply their effects to salmon
       this.air.applyAir(salmon);
       this.water.applyCurrent(salmon);
@@ -707,16 +721,12 @@ function () {
       this.grounds.forEach(function (ground) {
         return ground.animate(ctx);
       });
-      this.generateFood(8);
-      this.food.forEach(function (prey, i) {
-        prey.getEaten(salmon);
-        if (prey.eaten || prey.x < 0 || prey.x > _this2.width) _this2.food.splice(i, 1);
-
-        _this2.water.applyCurrent(prey);
-
-        prey.moveRandomly();
-        prey.animate(ctx);
-      });
+    }
+  }, {
+    key: "animate",
+    value: function animate(ctx, salmon) {
+      this.animateEnv(ctx, salmon);
+      this.animateFood(ctx, salmon);
     }
   }]);
 
@@ -755,14 +765,12 @@ function () {
     this.width = width;
     this.height = height;
     this.xVel = 0;
-    this.yVel = 0; // this.img = new Image();
-    // this.img.src = "./assets/images/zoo-plankton.png";
+    this.yVel = 0;
   }
 
   _createClass(MovingObj, [{
     key: "collide",
     value: function collide(salmon) {
-      // debugger
       var _overlap = function _overlap(rect1, rect2) {
         //check that they don't overlap in the x axis
         if (rect1.bounds().left > rect2.bounds().right || rect1.bounds().right < rect2.bounds().left) {
@@ -788,13 +796,9 @@ function () {
   }, {
     key: "draw",
     value: function draw(ctx) {
-      // ctx.save();
       if (!this.eaten) {
         ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.x, this.y, this.width, this.height);
-      } // ctx.fillStyle = "yellow";
-      // ctx.fillRect(this.x, this.y, this.width, this.height);
-      // ctx.restore();
-
+      }
     }
   }, {
     key: "update",
@@ -890,9 +894,9 @@ function (_MovingObj) {
     key: "moveRandomly",
     value: function moveRandomly() {
       this.x += Math.floor(Math.random() * 5);
-      this.x -= Math.floor(Math.random() * 4);
-      this.y += Math.floor(Math.random() * 3);
-      this.y -= Math.floor(Math.random() * 2);
+      this.x -= Math.floor(Math.random() * 3);
+      this.y += Math.floor(Math.random() * 5);
+      this.y -= Math.floor(Math.random() * 5);
     }
   }, {
     key: "getEaten",
@@ -993,7 +997,7 @@ function () {
   }, {
     key: "grow",
     value: function grow() {
-      this.width = this.initialWidth + Math.floor(Math.sqrt(this.totalEaten));
+      this.width = this.initialWidth + Math.floor(this.totalEaten / 3);
     }
   }, {
     key: "drawSalmon",
@@ -1137,7 +1141,7 @@ function () {
     key: "restart",
     value: function restart() {
       this.running = false;
-      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](50);
+      this.salmon = new _salmon__WEBPACK_IMPORTED_MODULE_0__["default"](25);
       this.level = new _level__WEBPACK_IMPORTED_MODULE_1__["default"](this.dimensions);
       this.camera = new _camera__WEBPACK_IMPORTED_MODULE_2__["default"](0, 0, this.camDim.width, this.camDim.height, this.dimensions.width, this.dimensions.height);
       this.camera.follow(this.salmon);
@@ -1302,15 +1306,16 @@ function (_Element) {
   }, {
     key: "applyCurrent",
     value: function applyCurrent(obj) {
-      if (this.salmonIsIn(obj) && this.shape === 'rect') {
+      if (this.salmonIsIn(obj)) {
         obj.xVel *= this.friction;
         obj.yVel *= this.friction;
         obj.xVel += this.current;
-        obj.yVel += this.buoyancy; // } else if (this.inWater(salmon) && this.shape === 'circle') {
-        //   salmon.xVel *= this.friction;
-        //   salmon.yVel *= this.friction;
-        //   // salmon.xVel += this.current;
-        //   salmon.yVel += this.buoyancy;
+        obj.yVel += this.buoyancy;
+
+        if (obj.y < this.top + 100) {
+          obj.xVel += this.current;
+          obj.yVel -= this.buoyancy;
+        }
       }
     }
   }, {

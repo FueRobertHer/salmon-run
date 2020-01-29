@@ -9,13 +9,9 @@ export default class MovingObj {
 
     this.xVel = 0;
     this.yVel = 0;
-
-    // this.img = new Image();
-    // this.img.src = "./assets/images/zoo-plankton.png";
   }
 
   collide(salmon) {
-    // debugger
     const _overlap = (rect1, rect2) => {
       //check that they don't overlap in the x axis
       if (rect1.bounds().left > rect2.bounds().right || rect1.bounds().right < rect2.bounds().left) {
@@ -37,13 +33,9 @@ export default class MovingObj {
   }
 
   draw(ctx) {
-    // ctx.save();
     if (!this.eaten) {
       ctx.drawImage(this.img, 0, 0, this.img.width, this.img.height, this.x, this.y, this.width, this.height)
     }
-      // ctx.fillStyle = "yellow";
-      // ctx.fillRect(this.x, this.y, this.width, this.height);
-    // ctx.restore();
   }
 
   update() {

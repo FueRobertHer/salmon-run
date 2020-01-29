@@ -32,16 +32,16 @@ export default class Water extends Element {
   }
 
   applyCurrent(obj) {
-    if (this.salmonIsIn(obj) && this.shape === 'rect') {
+    if (this.salmonIsIn(obj)) {
       obj.xVel *= this.friction;
       obj.yVel *= this.friction;
       obj.xVel += this.current;
       obj.yVel += this.buoyancy;
-    // } else if (this.inWater(salmon) && this.shape === 'circle') {
-    //   salmon.xVel *= this.friction;
-    //   salmon.yVel *= this.friction;
-    //   // salmon.xVel += this.current;
-    //   salmon.yVel += this.buoyancy;
+
+      if (obj.y < this.top + 100) {
+        obj.xVel += this.current;
+        obj.yVel -= this.buoyancy;
+      }
     }
   }
 

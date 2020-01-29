@@ -60,29 +60,37 @@ export default class Level {
     }
   }
 
-  animate(ctx, salmon) {
+  animateFood(ctx, salmon) {
+    this.generateFood(8)
+
+    this.food.forEach((prey, i) => {
+      prey.getEaten(salmon)
+      if (prey.eaten || prey.x < 0 || prey.x > this.width || prey.y > this.height) this.food.splice(i, 1)
+      this.water.applyCurrent(prey)
+      prey.moveRandomly()
+      prey.animate(ctx)
+    })
+  }
+
+  animateEnv(ctx, salmon) {
     // loop through air, water, ground arrays and apply their effects to salmon
     this.air.applyAir(salmon);
     this.water.applyCurrent(salmon);
 
-    this.grounds.forEach( ground => {ground.stopSalmon(salmon)});
+    this.grounds.forEach(ground => {
+      ground.stopSalmon(salmon)
+    });
     // this.ground.stopSalmon(salmon);
-
 
     // loop through air, water, ground arrays and draw them
     this.air.animate(ctx);
     this.water.animate(ctx);
     // this.ground.animate(ctx);
-    this.grounds.forEach( ground => ground.animate(ctx));
+    this.grounds.forEach(ground => ground.animate(ctx));
+  }
 
-    this.generateFood(8)
-
-    this.food.forEach((prey, i) => {
-      prey.getEaten(salmon)
-      if (prey.eaten || prey.x < 0 || prey.x > this.width) this.food.splice(i, 1)
-      this.water.applyCurrent(prey)
-      prey.moveRandomly()
-      prey.animate(ctx)
-    })
+  animate(ctx, salmon) {
+    this.animateEnv(ctx, salmon)
+    this.animateFood(ctx, salmon)
   }
 }
