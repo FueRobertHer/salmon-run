@@ -197,6 +197,7 @@ function () {
     this.mapWidth = mapWidth;
     this.mapHeight = mapHeight;
     this.followed = null;
+    this.paused = false;
   }
 
   _createClass(Camera, [{
@@ -229,6 +230,13 @@ function () {
     key: "draw",
     value: function draw(ctx, img) {
       ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+
+      if (this.paused) {
+        ctx.font = "30px Comic Sans MS";
+        ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+      }
     }
   }, {
     key: "animate",
@@ -492,7 +500,7 @@ function (_Prey) {
     _this.y = pos[1];
     _this.width = width;
     _this.height = height;
-    _this.foodValue = 2;
+    _this.foodValue = 1;
     _this.eaten = false;
     _this.img = new Image();
     _this.img.src = "./assets/images/krill.png";
@@ -576,11 +584,12 @@ function () {
 
       if (this.food.length < num) {
         var spacing;
-        this.food[lastFood] ? spacing = this.food[lastFood].x + 50 : spacing = this.width / 5;
-        spacing > this.width ? spacing = this.width : '';
-        var krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"]([spacing, this.water.randomYPos()], 15, 15);
-        this.food.push(krill);
-        console.log(this.food.length, krill.x);
+        this.food[lastFood] ? spacing = this.food[lastFood].x + 150 : spacing = this.width;
+
+        if (spacing <= this.width) {
+          var krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"]([spacing, this.water.randomYPos()], 15, 15);
+          this.food.push(krill);
+        }
       }
     }
   }, {
@@ -617,7 +626,7 @@ function () {
       this.grounds.forEach(function (ground) {
         return ground.animate(ctx);
       });
-      this.generateFood(20);
+      this.generateFood(8);
       this.food.forEach(function (prey, i) {
         prey.getEaten(salmon);
         if (prey.eaten || prey.x < 0 || prey.x > _this2.width) _this2.food.splice(i, 1);
@@ -1012,6 +1021,7 @@ function () {
       if (!this.running) {
         this.running = true;
         this.animate();
+        this.cam.paused = false;
       }
     }
   }, {
@@ -1019,10 +1029,7 @@ function () {
     value: function pause() {
       if (this.running) {
         this.running = false;
-        this.cam.font = "30px Comic Sans MS";
-        this.cam.fillStyle = "red";
-        this.cam.textAlign = "center";
-        this.cam.fillText("PAUSE", this.camDim.width / 2, this.camDim.height / 2);
+        this.cam.paused = true;
       }
     }
   }, {
@@ -1157,7 +1164,7 @@ function (_Element) {
     _this.right = _this.left + _this.width;
     _this.bottom = _this.top + _this.height;
     _this.friction = 0.8;
-    _this.current = -.1;
+    _this.current = -1;
     _this.buoyancy = -0.5;
     return _this;
   }
@@ -1202,7 +1209,6 @@ function (_Element) {
         var b = rect2.y - rect1.pos[1];
         var c = Math.sqrt(a * a + b * b); //check that they don't overlap in the x axis
 
-        console.log(c > totalRadius);
         if (c < totalRadius) return true;
         return false;
       };

@@ -10,7 +10,7 @@ export default class Krill extends Prey {
     this.width = width;
     this.height = height;
 
-    this.foodValue = 2;
+    this.foodValue = 1;
     this.eaten = false
 
     this.img = new Image();

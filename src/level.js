@@ -38,11 +38,12 @@ export default class Level {
     let lastFood = this.food.length - 1
     if (this.food.length < num) {
       let spacing
-      this.food[lastFood] ? spacing = this.food[lastFood].x + 50 : spacing = this.width/5
-      spacing > this.width ? spacing = this.width : ''
-      const krill = new Krill([spacing, this.water.randomYPos()], 15, 15);
-      this.food.push(krill)
-      console.log(this.food.length, krill.x)
+      this.food[lastFood] ? spacing = this.food[lastFood].x + 150 : spacing = this.width
+      
+      if (spacing <= this.width) {
+        const krill = new Krill([spacing, this.water.randomYPos()], 15, 15);
+        this.food.push(krill)
+      }
     }
   }
 
@@ -74,7 +75,7 @@ export default class Level {
     // this.ground.animate(ctx);
     this.grounds.forEach( ground => ground.animate(ctx));
 
-    this.generateFood(20)
+    this.generateFood(8)
 
     this.food.forEach((prey, i) => {
       prey.getEaten(salmon)

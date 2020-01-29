@@ -13,7 +13,7 @@ export default class Camera {
     this.mapHeight = mapHeight;
 
     this.followed = null;
-    
+    this.paused = false
   }
 
   follow(salmon) {
@@ -43,6 +43,12 @@ export default class Camera {
 
   draw(ctx, img) {
     ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+    if (this.paused) {
+      ctx.font = "30px Comic Sans MS";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      ctx.fillText("PAUSED", canvas.width / 2, canvas.height / 2);
+    }
   }
 
   animate(ctx, img) {

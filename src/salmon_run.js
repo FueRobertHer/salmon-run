@@ -33,16 +33,14 @@ export default class SalmonRun {
     if (!this.running) {
       this.running = true;
       this.animate();
+      this.cam.paused = false
     }
   }
 
   pause() {
     if (this.running) {
       this.running = false;
-      this.cam.font = "30px Comic Sans MS";
-      this.cam.fillStyle = "red";
-      this.cam.textAlign = "center";
-      this.cam.fillText("PAUSE", this.camDim.width / 2, this.camDim.height / 2);
+      this.cam.paused = true
     }
   }
 

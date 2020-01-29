@@ -15,7 +15,7 @@ export default class Water extends Element {
     this.bottom = this.top + this.height;
     
     this.friction = 0.8;
-    this.current = -.1;
+    this.current = -1;
     this.buoyancy = -0.5;
   }
 
@@ -56,8 +56,6 @@ export default class Water extends Element {
       const c = Math.sqrt((a * a) + (b * b));
       //check that they don't overlap in the x axis
 
-      console.log(c > totalRadius);
-      
       if (c < totalRadius) return true;
       return false;
     };
