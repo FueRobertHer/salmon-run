@@ -202,8 +202,9 @@ function () {
     this.paused = false;
     this.score = 0;
     this.salmonSize = 0;
+    this.atStart = true;
     this.gameover = false;
-    this.countdown = 60;
+    this.countdown = 2;
     this.count = setInterval(function () {
       _this.countdown--;
     }, 1000);
@@ -283,6 +284,31 @@ function () {
       this.gameover = true;
     }
   }, {
+    key: "showStartScreen",
+    value: function showStartScreen(ctx) {
+      this.blackScreen(ctx);
+      this.showTitle(ctx);
+      this.showStartDir(ctx);
+    }
+  }, {
+    key: "showTitle",
+    value: function showTitle(ctx) {
+      ctx.font = "90px Baloo";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      var text = "Salmon Run";
+      ctx.fillText(text, this.width / 2, this.height / 2);
+    }
+  }, {
+    key: "showStartDir",
+    value: function showStartDir(ctx) {
+      ctx.font = "20px Baloo";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      var text = "Press Space to Start";
+      ctx.fillText(text, this.width / 2, this.height / 3 * 2.5);
+    }
+  }, {
     key: "showEndScreen",
     value: function showEndScreen(ctx) {
       this.blackScreen(ctx);
@@ -318,16 +344,20 @@ function () {
   }, {
     key: "draw",
     value: function draw(ctx, img) {
-      if (this.gameover) {
-        this.showEndScreen(ctx);
+      if (this.atStart) {
+        this.showStartScreen(ctx);
       } else {
-        ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
-        this.drawCountdown(ctx);
+        if (this.gameover) {
+          this.showEndScreen(ctx);
+        } else {
+          ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+          this.drawCountdown(ctx);
 
-        if (this.paused) {
-          ctx.font = "80px Baloo";
-          ctx.textAlign = "center";
-          ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+          if (this.paused) {
+            ctx.font = "80px Baloo";
+            ctx.textAlign = "center";
+            ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+          }
         }
       }
     }
@@ -1123,6 +1153,7 @@ function () {
     this.running = true;
     this.registerEvents();
     this.restart();
+    this.startNewGame();
   }
 
   _createClass(SalmonRun, [{
@@ -1155,12 +1186,17 @@ function () {
   }, {
     key: "timeZero",
     value: function timeZero() {
-      return this.timeleft() === 0;
+      return this.timeleft() <= 0;
     }
   }, {
     key: "timeleft",
     value: function timeleft() {
       return this.camera.countdown;
+    }
+  }, {
+    key: "startNewGame",
+    value: function startNewGame() {
+      this.camera.atStart = true;
     }
   }, {
     key: "restart",
@@ -1196,10 +1232,10 @@ function () {
 
       if (e.key === 'p' || e.key === 'Escape') this.pause();
       if (e.key === ' ') this.play();
+      if (e.key === ' ' && this.camera.atStart) this.camera.atStart = false;
 
       if (e.key === ' ' && this.gameOver()) {
-        this.restart();
-        this.unpause();
+        this.restart(); // this.unpause()
       }
     }
   }, {
@@ -1227,7 +1263,12 @@ function () {
   }, {
     key: "showScore",
     value: function showScore() {
+      var _this = this;
+
       this.camera.takeScore(this.salmonTotalEaten(), this.salmon.width);
+      setTimeout(function () {
+        return _this.running = false;
+      }, 0);
     }
   }, {
     key: "playGame",
@@ -1236,16 +1277,11 @@ function () {
       this.level.animate(this.ctx, this.salmon);
       this.salmon.animate(this.ctx);
       this.camera.animate(this.cam, this.canvas);
-      if (this.gameOver()) this.playGameover();
+      if (this.gameOver()) this.showScore();
 
       if (this.running) {
         requestAnimationFrame(this.animate.bind(this));
       }
-    }
-  }, {
-    key: "playGameover",
-    value: function playGameover() {
-      this.showScore();
     }
   }, {
     key: "animate",

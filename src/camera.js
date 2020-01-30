@@ -16,9 +16,10 @@ export default class Camera {
     this.paused = false
     this.score = 0
     this.salmonSize = 0
+    this.atStart = true
     this.gameover = false
 
-    this.countdown = 60
+    this.countdown = 2
 
     this.count = setInterval(() => {
       this.countdown--
@@ -86,6 +87,28 @@ export default class Camera {
     this.gameover = true
   }
 
+  showStartScreen(ctx) {
+    this.blackScreen(ctx)
+    this.showTitle(ctx)
+    this.showStartDir(ctx)
+  } 
+
+  showTitle(ctx) {
+    ctx.font = "90px Baloo";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    let text = "Salmon Run"
+    ctx.fillText(text, this.width / 2, this.height / 2);
+  }
+
+  showStartDir(ctx) {
+    ctx.font = "20px Baloo";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    let text = "Press Space to Start"
+    ctx.fillText(text, this.width / 2, (this.height / 3) * 2.5);
+  }
+
   showEndScreen(ctx) {
     this.blackScreen(ctx)
     this.showScore(ctx)
@@ -116,16 +139,20 @@ export default class Camera {
   }
 
   draw(ctx, img) {
-    if (this.gameover) {
-      this.showEndScreen(ctx)
+    if (this.atStart) {
+      this.showStartScreen(ctx)
     } else {
-      ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
-      this.drawCountdown(ctx)
-  
-      if (this.paused) {
-        ctx.font = "80px Baloo";
-        ctx.textAlign = "center";
-        ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+      if (this.gameover) {
+        this.showEndScreen(ctx)
+      } else {
+        ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
+        this.drawCountdown(ctx)
+    
+        if (this.paused) {
+          ctx.font = "80px Baloo";
+          ctx.textAlign = "center";
+          ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+        }
       }
     }
   }

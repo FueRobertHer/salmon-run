@@ -26,7 +26,8 @@ export default class SalmonRun {
     this.running = true;
 
     this.registerEvents();
-    this.restart();
+    this.restart()
+    this.startNewGame();
   }
 
   play() {
@@ -53,11 +54,15 @@ export default class SalmonRun {
   }
 
   timeZero() {
-    return this.timeleft() === 0
+    return this.timeleft() <= 0
   }
 
   timeleft() {
     return this.camera.countdown
+  }
+
+  startNewGame() {
+    this.camera.atStart = true
   }
 
   restart() {
@@ -91,9 +96,10 @@ export default class SalmonRun {
     // gameplay controls
     if (e.key === 'p' || e.key === 'Escape') this.pause()
     if (e.key === ' ') this.play()
+    if (e.key === ' ' && this.camera.atStart) this.camera.atStart = false
     if (e.key === ' ' && this.gameOver()) {
       this.restart() 
-      this.unpause()
+      // this.unpause()
     }
   }
 
@@ -118,6 +124,7 @@ export default class SalmonRun {
 
   showScore() {
     this.camera.takeScore(this.salmonTotalEaten(), this.salmon.width)
+    setTimeout(() => (this.running = false), 0)
   }
 
   playGame() {
@@ -127,15 +134,11 @@ export default class SalmonRun {
     this.salmon.animate(this.ctx);
     this.camera.animate(this.cam, this.canvas)
 
-    if (this.gameOver()) this.playGameover()
+    if (this.gameOver()) this.showScore()
 
     if (this.running) {
       requestAnimationFrame(this.animate.bind(this))
     }
-  }
-
-  playGameover() {
-    this.showScore()
   }
 
   animate() {
