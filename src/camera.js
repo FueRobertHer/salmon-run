@@ -19,7 +19,7 @@ export default class Camera {
     this.atStart = true
     this.gameover = false
 
-    this.countdown = 2
+    this.countdown = 60
 
     this.count = setInterval(() => {
       this.countdown--

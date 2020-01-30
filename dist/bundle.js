@@ -204,7 +204,7 @@ function () {
     this.salmonSize = 0;
     this.atStart = true;
     this.gameover = false;
-    this.countdown = 2;
+    this.countdown = 60;
     this.count = setInterval(function () {
       _this.countdown--;
     }, 1000);
