@@ -13,9 +13,6 @@ export default class Level {
     this.enemies = []
 
     this.buildLevel();
-    setInterval(() => {
-      console.log(this.food, this.trash)
-    }, 1000);
   }
 
   buildLevel() {
@@ -42,7 +39,7 @@ export default class Level {
       let spacing
       this.food[lastFood] ? spacing = this.food[lastFood].x + 150 : spacing = this.width
       
-      if (spacing <= this.width) {
+      if (spacing <= this.width && spacing > this.width * .95) {
         const krill = new Krill([spacing, this.water.randomYPos()], 15, 15);
         this.food.push(krill)
       }
@@ -53,9 +50,9 @@ export default class Level {
     let lastTrash = this.trash.length - 1
     if (this.trash.length < num) {
       let spacing
-      this.trash[lastTrash] ? spacing = this.trash[lastTrash].x + 250 : spacing = this.width
+      this.trash[lastTrash] ? spacing = this.trash[lastTrash].x + 300 : spacing = this.width
 
-      if (spacing <= this.width) {
+      if (spacing <= this.width && spacing > this.width * .8) {
         const blah = new Trash([spacing, this.water.randomYPos()], 25, 25);
         this.trash.push(blah)
       }
@@ -76,7 +73,7 @@ export default class Level {
   }
 
   animateTrash(ctx, salmon) {
-    this.generateTrash(4)
+    this.generateTrash(2)
 
     this.trash.forEach((tra, i) => {
       tra.getEaten(salmon)

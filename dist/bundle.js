@@ -683,8 +683,6 @@ var Level =
 /*#__PURE__*/
 function () {
   function Level(dimensions) {
-    var _this = this;
-
     _classCallCheck(this, Level);
 
     this.width = dimensions.width;
@@ -693,15 +691,12 @@ function () {
     this.trash = [];
     this.enemies = [];
     this.buildLevel();
-    setInterval(function () {
-      console.log(_this.food, _this.trash);
-    }, 1000);
   }
 
   _createClass(Level, [{
     key: "buildLevel",
     value: function buildLevel() {
-      var _this2 = this;
+      var _this = this;
 
       //loop through air, water, ground arrays and build them
       this.air = new _air__WEBPACK_IMPORTED_MODULE_0__["default"]([0, 0], this.width, this.height);
@@ -716,7 +711,7 @@ function () {
       this.rawGrounds.forEach(function (option) {
         var ground = new _ground__WEBPACK_IMPORTED_MODULE_2__["default"](option.pos, option.width, option.height);
 
-        _this2.grounds.push(ground); // debugger
+        _this.grounds.push(ground); // debugger
 
       }); // this.ground = new Ground([0, 350], this.width, this.height - 350 - 150);
     }
@@ -729,7 +724,7 @@ function () {
         var spacing;
         this.food[lastFood] ? spacing = this.food[lastFood].x + 150 : spacing = this.width;
 
-        if (spacing <= this.width) {
+        if (spacing <= this.width && spacing > this.width * .95) {
           var krill = new _krill__WEBPACK_IMPORTED_MODULE_3__["default"]([spacing, this.water.randomYPos()], 15, 15);
           this.food.push(krill);
         }
@@ -742,9 +737,9 @@ function () {
 
       if (this.trash.length < num) {
         var spacing;
-        this.trash[lastTrash] ? spacing = this.trash[lastTrash].x + 250 : spacing = this.width;
+        this.trash[lastTrash] ? spacing = this.trash[lastTrash].x + 300 : spacing = this.width;
 
-        if (spacing <= this.width) {
+        if (spacing <= this.width && spacing > this.width * .8) {
           var blah = new _trash__WEBPACK_IMPORTED_MODULE_4__["default"]([spacing, this.water.randomYPos()], 25, 25);
           this.trash.push(blah);
         }
@@ -768,14 +763,14 @@ function () {
   }, {
     key: "animateTrash",
     value: function animateTrash(ctx, salmon) {
-      var _this3 = this;
+      var _this2 = this;
 
-      this.generateTrash(4);
+      this.generateTrash(2);
       this.trash.forEach(function (tra, i) {
         tra.getEaten(salmon);
-        if (tra.eaten || tra.x < 0 || tra.x > _this3.width || tra.y > _this3.height) _this3.trash.splice(i, 1);
+        if (tra.eaten || tra.x < 0 || tra.x > _this2.width || tra.y > _this2.height) _this2.trash.splice(i, 1);
 
-        _this3.water.applyCurrent(tra);
+        _this2.water.applyCurrent(tra);
 
         tra.moveRandomly(1);
         tra.animate(ctx);
@@ -784,14 +779,14 @@ function () {
   }, {
     key: "animateFood",
     value: function animateFood(ctx, salmon) {
-      var _this4 = this;
+      var _this3 = this;
 
       this.generateFood(8);
       this.food.forEach(function (prey, i) {
         prey.getEaten(salmon);
-        if (prey.eaten || prey.x < 0 || prey.x > _this4.width || prey.y > _this4.height) _this4.food.splice(i, 1);
+        if (prey.eaten || prey.x < 0 || prey.x > _this3.width || prey.y > _this3.height) _this3.food.splice(i, 1);
 
-        _this4.water.applyCurrent(prey);
+        _this3.water.applyCurrent(prey);
 
         prey.moveRandomly(5);
         prey.animate(ctx);
