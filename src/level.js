@@ -13,6 +13,9 @@ export default class Level {
     this.enemies = []
 
     this.buildLevel();
+    setInterval(() => {
+      console.log(this.food, this.trash)
+    }, 1000);
   }
 
   buildLevel() {
@@ -73,11 +76,11 @@ export default class Level {
   }
 
   animateTrash(ctx, salmon) {
-    this.generateTrash(3)
+    this.generateTrash(4)
 
     this.trash.forEach((tra, i) => {
       tra.getEaten(salmon)
-      if (tra.eaten || tra.x < 0 || tra.x > this.width || tra.y > this.height) this.food.splice(i, 1)
+      if (tra.eaten || tra.x < 0 || tra.x > this.width || tra.y > this.height) this.trash.splice(i, 1)
       this.water.applyCurrent(tra)
       tra.moveRandomly(1)
       tra.animate(ctx)
@@ -85,7 +88,7 @@ export default class Level {
   }
 
   animateFood(ctx, salmon) {
-    this.generateFood(6)
+    this.generateFood(8)
 
     this.food.forEach((prey, i) => {
       prey.getEaten(salmon)
@@ -98,7 +101,7 @@ export default class Level {
 
   animatePrey(ctx, salmon) {
     this.animateFood(ctx, salmon)
-    // this.animateTrash(ctx, salmon)
+    this.animateTrash(ctx, salmon)
   }
 
   animateEnv(ctx, salmon) {
@@ -119,7 +122,6 @@ export default class Level {
   }
 
   animate(ctx, salmon) {
-    console.log(this.food)
     this.animateEnv(ctx, salmon)
     this.animatePrey(ctx, salmon)
   }
