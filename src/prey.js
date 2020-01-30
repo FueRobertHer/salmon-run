@@ -14,14 +14,6 @@ export default class Prey extends MovingObj {
     this.eaten = false;
 
     this.img = new Image();
-    // this.img.src = "./assets/images/zoo-plankton.png";
-  }
-
-  moveRandomly() {
-    this.x += Math.floor(Math.random() * 5)
-    this.x -= Math.floor(Math.random() * 3)
-    this.y += Math.floor(Math.random() * 5)
-    this.y -= Math.floor(Math.random() * 5)
   }
 
   getEaten(salmon) {
