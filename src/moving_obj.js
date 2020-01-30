@@ -11,13 +11,6 @@ export default class MovingObj {
     this.yVel = 0;
   }
 
-  moveRandomly() {
-    this.x += Math.floor(Math.random() * 5)
-    this.x -= Math.floor(Math.random() * 3)
-    this.y += Math.floor(Math.random() * 5)
-    this.y -= Math.floor(Math.random() * 5)
-  }
-
   collide(salmon) {
     const _overlap = (rect1, rect2) => {
       //check that they don't overlap in the x axis
