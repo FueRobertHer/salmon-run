@@ -138,6 +138,18 @@ export default class Camera {
     ctx.fillRect(0, 0, this.width, this.height)
   }
 
+  showPause(ctx) {
+    if (this.paused) {
+      ctx.font = "80px Baloo";
+      ctx.textAlign = "center";
+      ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+
+      ctx.font = "20px Baloo";
+      let text = "Press Space to continue"
+      ctx.fillText(text, this.width / 2, (this.height / 3) * 2.5);
+    }
+  }
+
   draw(ctx, img) {
     if (this.atStart) {
       this.showStartScreen(ctx)
@@ -147,12 +159,8 @@ export default class Camera {
       } else {
         ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
         this.drawCountdown(ctx)
-    
-        if (this.paused) {
-          ctx.font = "80px Baloo";
-          ctx.textAlign = "center";
-          ctx.fillText("PAUSED", this.width / 2, this.height / 2);
-        }
+        
+        this.showPause(ctx)
       }
     }
   }

@@ -342,6 +342,18 @@ function () {
       ctx.fillRect(0, 0, this.width, this.height);
     }
   }, {
+    key: "showPause",
+    value: function showPause(ctx) {
+      if (this.paused) {
+        ctx.font = "80px Baloo";
+        ctx.textAlign = "center";
+        ctx.fillText("PAUSED", this.width / 2, this.height / 2);
+        ctx.font = "20px Baloo";
+        var text = "Press Space to continue";
+        ctx.fillText(text, this.width / 2, this.height / 3 * 2.5);
+      }
+    }
+  }, {
     key: "draw",
     value: function draw(ctx, img) {
       if (this.atStart) {
@@ -352,12 +364,7 @@ function () {
         } else {
           ctx.drawImage(img, this.x, this.y, this.width, this.height, 0, 0, this.width, this.height);
           this.drawCountdown(ctx);
-
-          if (this.paused) {
-            ctx.font = "80px Baloo";
-            ctx.textAlign = "center";
-            ctx.fillText("PAUSED", this.width / 2, this.height / 2);
-          }
+          this.showPause(ctx);
         }
       }
     }
@@ -658,8 +665,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _air__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./air */ "./src/air.js");
 /* harmony import */ var _water__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./water */ "./src/water.js");
 /* harmony import */ var _ground__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ground */ "./src/ground.js");
-/* harmony import */ var _zoo_plankton__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./zoo_plankton */ "./src/zoo_plankton.js");
-/* harmony import */ var _krill__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./krill */ "./src/krill.js");
+/* harmony import */ var _krill__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./krill */ "./src/krill.js");
+/* harmony import */ var _trash__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./trash */ "./src/trash.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -668,7 +675,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
- // import MovingObj from './moving_obj';
 
 
 
@@ -682,6 +688,7 @@ function () {
     this.width = dimensions.width;
     this.height = dimensions.height;
     this.food = [];
+    this.trash = [];
     this.enemies = [];
     this.buildLevel();
   }
@@ -718,8 +725,23 @@ function () {
         this.food[lastFood] ? spacing = this.food[lastFood].x + 150 : spacing = this.width;
 
         if (spacing <= this.width) {
-          var krill = new _krill__WEBPACK_IMPORTED_MODULE_4__["default"]([spacing, this.water.randomYPos()], 15, 15);
+          var krill = new _krill__WEBPACK_IMPORTED_MODULE_3__["default"]([spacing, this.water.randomYPos()], 15, 15);
           this.food.push(krill);
+        }
+      }
+    }
+  }, {
+    key: "generateTrash",
+    value: function generateTrash(num) {
+      var lastTrash = this.trash.length - 1;
+
+      if (this.trash.length < num) {
+        var spacing;
+        this.trash[lastTrash] ? spacing = this.trash[lastTrash].x + 250 : spacing = this.width;
+
+        if (spacing <= this.width) {
+          var blah = new _trash__WEBPACK_IMPORTED_MODULE_4__["default"]([spacing, this.water.randomYPos()], 25, 25);
+          this.trash.push(blah);
         }
       }
     }
@@ -739,20 +761,41 @@ function () {
       }
     }
   }, {
-    key: "animateFood",
-    value: function animateFood(ctx, salmon) {
+    key: "animateTrash",
+    value: function animateTrash(ctx, salmon) {
       var _this2 = this;
 
-      this.generateFood(8);
+      this.generateTrash(3);
+      this.trash.forEach(function (tra, i) {
+        tra.getEaten(salmon);
+        if (tra.eaten || tra.x < 0 || tra.x > _this2.width || tra.y > _this2.height) _this2.food.splice(i, 1);
+
+        _this2.water.applyCurrent(tra);
+
+        tra.moveRandomly(1);
+        tra.animate(ctx);
+      });
+    }
+  }, {
+    key: "animateFood",
+    value: function animateFood(ctx, salmon) {
+      var _this3 = this;
+
+      this.generateFood(6);
       this.food.forEach(function (prey, i) {
         prey.getEaten(salmon);
-        if (prey.eaten || prey.x < 0 || prey.x > _this2.width || prey.y > _this2.height) _this2.food.splice(i, 1);
+        if (prey.eaten || prey.x < 0 || prey.x > _this3.width || prey.y > _this3.height) _this3.food.splice(i, 1);
 
-        _this2.water.applyCurrent(prey);
+        _this3.water.applyCurrent(prey);
 
-        prey.moveRandomly();
+        prey.moveRandomly(5);
         prey.animate(ctx);
       });
+    }
+  }, {
+    key: "animatePrey",
+    value: function animatePrey(ctx, salmon) {
+      this.animateFood(ctx, salmon); // this.animateTrash(ctx, salmon)
     }
   }, {
     key: "animateEnv",
@@ -775,8 +818,9 @@ function () {
   }, {
     key: "animate",
     value: function animate(ctx, salmon) {
+      console.log(this.food);
       this.animateEnv(ctx, salmon);
-      this.animateFood(ctx, salmon);
+      this.animatePrey(ctx, salmon);
     }
   }]);
 
@@ -942,11 +986,11 @@ function (_MovingObj) {
 
   _createClass(Prey, [{
     key: "moveRandomly",
-    value: function moveRandomly() {
-      this.x += Math.floor(Math.random() * 5);
-      this.x -= Math.floor(Math.random() * 3);
-      this.y += Math.floor(Math.random() * 5);
-      this.y -= Math.floor(Math.random() * 5);
+    value: function moveRandomly(num) {
+      this.x += Math.floor(Math.random() * num);
+      this.x -= Math.floor(Math.random() * num);
+      this.y += Math.floor(Math.random() * num);
+      this.y -= Math.floor(Math.random() * num);
     }
   }, {
     key: "getEaten",
@@ -1298,6 +1342,80 @@ function () {
 
 /***/ }),
 
+/***/ "./src/trash.js":
+/*!**********************!*\
+  !*** ./src/trash.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Trash; });
+/* harmony import */ var _prey__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./prey */ "./src/prey.js");
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
+
+var Trash =
+/*#__PURE__*/
+function (_Prey) {
+  _inherits(Trash, _Prey);
+
+  function Trash(pos, width, height) {
+    var _this;
+
+    _classCallCheck(this, Trash);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Trash).call(this, pos, width, height));
+    _this.pos = pos;
+    _this.x = pos[0];
+    _this.y = pos[1];
+    _this.width = width;
+    _this.height = height;
+    _this.foodValue = -15;
+    _this.eaten = false;
+    _this.img = new Image();
+    _this.img.src = "./assets/images/trash.png";
+    return _this;
+  }
+
+  _createClass(Trash, [{
+    key: "getEaten",
+    value: function getEaten(salmon) {
+      if (this.collide(salmon)) {
+        if (!this.eaten) {
+          salmon.totalEaten += this.foodValue;
+          salmon.grow();
+          this.eaten = true;
+        }
+      }
+    }
+  }]);
+
+  return Trash;
+}(_prey__WEBPACK_IMPORTED_MODULE_0__["default"]);
+
+
+
+/***/ }),
+
 /***/ "./src/water.js":
 /*!**********************!*\
   !*** ./src/water.js ***!
@@ -1424,63 +1542,6 @@ function (_Element) {
 
   return Water;
 }(_element__WEBPACK_IMPORTED_MODULE_0__["default"]);
-
-
-
-/***/ }),
-
-/***/ "./src/zoo_plankton.js":
-/*!*****************************!*\
-  !*** ./src/zoo_plankton.js ***!
-  \*****************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ZooPlankton; });
-/* harmony import */ var _prey__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./prey */ "./src/prey.js");
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
-
-
-var ZooPlankton =
-/*#__PURE__*/
-function (_Prey) {
-  _inherits(ZooPlankton, _Prey);
-
-  function ZooPlankton(pos, width, height) {
-    var _this;
-
-    _classCallCheck(this, ZooPlankton);
-
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(ZooPlankton).call(this, pos, width, height));
-    _this.pos = pos;
-    _this.x = pos[0];
-    _this.y = pos[1];
-    _this.width = width;
-    _this.height = height;
-    _this.foodValue = 1;
-    _this.eaten = false;
-    _this.img = new Image();
-    _this.img.src = "./assets/images/zoo-plankton.png";
-    return _this;
-  }
-
-  return ZooPlankton;
-}(_prey__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
 
 

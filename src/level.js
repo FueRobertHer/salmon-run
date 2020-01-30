@@ -1,15 +1,15 @@
 import Air from './air';
 import Water from './water';
 import Ground from './ground';
-// import MovingObj from './moving_obj';
-import ZooPlankton from './zoo_plankton';
 import Krill from './krill';
+import Trash from './trash';
 
 export default class Level {
   constructor(dimensions) {
     this.width = dimensions.width;
     this.height = dimensions.height
     this.food = []
+    this.trash = []
     this.enemies = []
 
     this.buildLevel();
@@ -34,7 +34,6 @@ export default class Level {
   }
 
   generateFood(num) {
-    
     let lastFood = this.food.length - 1
     if (this.food.length < num) {
       let spacing
@@ -43,6 +42,19 @@ export default class Level {
       if (spacing <= this.width) {
         const krill = new Krill([spacing, this.water.randomYPos()], 15, 15);
         this.food.push(krill)
+      }
+    }
+  }
+
+  generateTrash(num) {
+    let lastTrash = this.trash.length - 1
+    if (this.trash.length < num) {
+      let spacing
+      this.trash[lastTrash] ? spacing = this.trash[lastTrash].x + 250 : spacing = this.width
+
+      if (spacing <= this.width) {
+        const blah = new Trash([spacing, this.water.randomYPos()], 25, 25);
+        this.trash.push(blah)
       }
     }
   }
@@ -60,16 +72,33 @@ export default class Level {
     }
   }
 
+  animateTrash(ctx, salmon) {
+    this.generateTrash(3)
+
+    this.trash.forEach((tra, i) => {
+      tra.getEaten(salmon)
+      if (tra.eaten || tra.x < 0 || tra.x > this.width || tra.y > this.height) this.food.splice(i, 1)
+      this.water.applyCurrent(tra)
+      tra.moveRandomly(1)
+      tra.animate(ctx)
+    })  
+  }
+
   animateFood(ctx, salmon) {
-    this.generateFood(8)
+    this.generateFood(6)
 
     this.food.forEach((prey, i) => {
       prey.getEaten(salmon)
       if (prey.eaten || prey.x < 0 || prey.x > this.width || prey.y > this.height) this.food.splice(i, 1)
       this.water.applyCurrent(prey)
-      prey.moveRandomly()
+      prey.moveRandomly(5)
       prey.animate(ctx)
     })
+  }
+
+  animatePrey(ctx, salmon) {
+    this.animateFood(ctx, salmon)
+    // this.animateTrash(ctx, salmon)
   }
 
   animateEnv(ctx, salmon) {
@@ -90,7 +119,8 @@ export default class Level {
   }
 
   animate(ctx, salmon) {
+    console.log(this.food)
     this.animateEnv(ctx, salmon)
-    this.animateFood(ctx, salmon)
+    this.animatePrey(ctx, salmon)
   }
 }
